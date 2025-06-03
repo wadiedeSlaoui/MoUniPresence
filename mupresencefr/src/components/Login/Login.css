@@ -1,0 +1,36 @@
+.body {
+    background-image: url("bg.jpg");
+    
+    background-repeat: no-repeat;
+    background-size: cover;
+    width: 100%;
+    height: 100%;
+    text-align: center;
+  }
+  .propre-container {
+    position: relative;
+    padding-top: 30%;
+  
+    transform: perspective(5px) translateY(-34%);
+    margin: 0 auto;
+    width: 30%;
+    height: 100%;
+  }
+  .element-margin {
+    padding-top: 20px;
+  }
+  .app-name {
+    color: rgb(7, 69, 144);
+  }
+  img {
+    width: max-content;
+    height: 100px;
+  }
+  .forget_password {
+    color: red;
+    font-size: 15px;
+  }
+  .forget_password:hover{
+    color: #87CB16;
+    font-size: 15px;
+  }
