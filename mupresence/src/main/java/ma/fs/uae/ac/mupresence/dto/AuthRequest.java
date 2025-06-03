@@ -1,9 +1,9 @@
-package ma.fs.uae.ac.mupresence.entity;
+package ma.fs.uae.ac.mupresence.dto;
 
 import lombok.Data;
 
 @Data
-public class User {
+public class AuthRequest {
 
     private String username;
     private String password;
