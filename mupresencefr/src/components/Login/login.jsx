@@ -25,7 +25,6 @@ import { withRouter } from 'react-router-dom';
       e.preventDefault();     
       sessionStorage.setItem('token',"");
       sessionStorage.setItem('user',"");
-      sessionStorage.setItem('role',"");
       sessionStorage.setItem('user1',"");
       this.props.history.push('/admin/dashboard');
         
@@ -83,7 +82,7 @@ import { withRouter } from 'react-router-dom';
                         <div className="card-body">
                                 <div className="form-group">
                             <div className="app-name">
-                                            <h4>M.U.Presence </h4>
+                                            <h4 className='nna'>{sessionStorage.getItem("role")}</h4>
                             </div>
                                     <div className="hidden-error text-danger" style={{display:"none"}}>
                                         Incorrect Username/Email or password. Enter the correct EMail and password and try again.
@@ -96,7 +95,7 @@ import { withRouter } from 'react-router-dom';
                                              <input type="password" name="password" className="form-control" onChange={this.changepasswordHandler} placeholder="Password"/>
                                             </div>
                                             <div className="container-sm element-margin">
-                                             <button type="submit" className="btn btn-success" name="singIn" onClick={this.login} >Sign In</button>
+                                             <button type="submit"  className="btn btn-primary ter" name="singIn" onClick={this.login} >Sign In</button>
                                     </div>
                                
                                 

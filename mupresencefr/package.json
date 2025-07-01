@@ -1,15 +1,16 @@
+
 {
   "name": "muresence",
   "version": "1.0.0",
   "dependencies": {
-    "@fortawesome/fontawesome-free": "5.15.2",
+    "@fortawesome/fontawesome-free": "6.4.0",
     "ajv": "^8.16.0",
-    "bootstrap": "4.6.0",
+    "bootstrap": "^5.3.6",
     "chartist": "0.11.4",
-    "gulp": "4.0.2",
+    "gulp": "^5.0.1",
     "gulp-append-prepend": "1.0.9",
     "react": ">=16.8.0",
-    "react-bootstrap": "2.4.0",
+    "react-bootstrap": "^2.4.0",
     "react-chartist": "0.14.4",
     "react-dom": ">=16.8.0",
     "react-notification-alert": "0.0.13",
@@ -17,7 +18,8 @@
     "react-router-dom": "5.2.0",
     "react-scripts": "5.0.1",
     "reactstrap": "8.8.1",
-    "sass": "1.53.0"
+    "sass": "1.53.0",
+    "xlsx": "^0.18.5"
   },
   "optionalDependencies": {
     "jquery": "3.5.1",

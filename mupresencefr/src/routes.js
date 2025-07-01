@@ -25,14 +25,7 @@ import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
 
 const dashboardRoutes = [
-  {
-    upgrade: true,
-    path: "/upgrade",
-    name: "Upgrade to PRO",
-    icon: "nc-icon nc-alien-33",
-    component: Upgrade,
-    layout: "/admin"
-  },
+
   {
     path: "/dashboard",
     name: "Dashboard",
@@ -47,7 +40,7 @@ const dashboardRoutes = [
     component: UserProfile,
     layout: "/admin"
   },
-  {
+/* {
     path: "/table",
     name: "Table List",
     icon: "nc-icon nc-notes",
@@ -81,7 +74,7 @@ const dashboardRoutes = [
     icon: "nc-icon nc-bell-55",
     component: Notifications,
     layout: "/admin"
-  }
+  }*/
 ];
 
 export default dashboardRoutes;
