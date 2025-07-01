@@ -1,14 +1,23 @@
 import React, { useState, useRef } from "react";
 import * as XLSX from "xlsx";
-import { Button, Card, Container, Table, Spinner, Alert } from "react-bootstrap";
+import { Button, Card, Container, Table, Spinner, Alert, Tab, Tabs } from "react-bootstrap";
 import "style/dashboard.css";
 
 function Dashboard() {
   const [extractedData, setExtractedData] = useState(null);
   const [fileName, setFileName] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [headers, setHeaders] = useState([]);
   const [error, setError] = useState(null);
+  const [fileInfo, setFileInfo] = useState({
+    university: "",
+    place: "",
+    city: "",
+    description: "",
+    filiere: "",
+    modules: [],
+    moduleIds : []
+  });
+  const [activeTab, setActiveTab] = useState("all");
   const fileInputRef = useRef(null);
 
   const handleButtonClick = () => {
@@ -22,8 +31,16 @@ function Dashboard() {
     setFileName(file.name);
     setIsLoading(true);
     setExtractedData(null);
-    setHeaders([]);
     setError(null);
+    setFileInfo({
+      university: "",
+      place: "",
+      city: "",
+      description: "",
+      filiere: "",
+      modules: [],
+      moduleIds:[]
+    });
 
     try {
       const data = await readFile(file);
@@ -56,45 +73,74 @@ function Dashboard() {
       const firstSheetName = workbook.SheetNames[0];
       const worksheet = workbook.Sheets[firstSheetName];
       
-      // Convert entire sheet to JSON with headers
       const jsonData = XLSX.utils.sheet_to_json(worksheet, {
-        header: 1,  // Get raw array of arrays
-        defval: "", // Empty string for empty cells
-        raw: true   // Get raw values
+        header: 1,
+        defval: "",
+        raw: true
       });
 
-      if (jsonData.length < 2) {
-        throw new Error('File must have at least 2 rows (header row + data)');
+      if (jsonData.length < 8) {
+        throw new Error('File must have at least 8 rows (info rows + header + data)');
       }
 
-      // SKIP FIRST ROW COMPLETELY (index 0)
-      // Use second row (index 1) as headers
-      const extractedHeaders = jsonData[2].map(h => h || ''); // Ensure no undefined headers
-      
-      // Start data from third row (index 2)
-      const dataRows = jsonData.slice(3); 
+      const moduleNames = jsonData[5].slice(4, -3);
+      const moduleIds = jsonData[6].slice(4, -3);
+      const info = {
+        university: jsonData[0][0] || "",
+        place: jsonData[1][0] || "",
+        city: jsonData[2][0] || "",
+        description: jsonData[3][0] || "",
+        filiere: jsonData[4][0] || "",
+        modules: moduleNames,
+        moduleIds:moduleIds
+      };
+      setFileInfo(info);
 
-      const processedData = dataRows.map((row, rowIndex) => {
-        const obj = {};
-        extractedHeaders.forEach((header, colIndex) => {
-          obj[header] = row[colIndex] !== undefined ? row[colIndex] : '';
+      const dataRows = jsonData.slice(7); 
+
+      const processedData = dataRows.map((row) => {
+        const student = {
+          studentCode: row[0] || '',
+          massarCode: row[1] || '',
+          lastName: row[2] || '',
+          firstName: row[3] || '',
+          modules: {},
+          room: row[row.length - 2] || '',
+          placeNumber: row[row.length - 1] || ''
+        };
+
+        moduleNames.forEach((moduleName, index) => {
+          const columnIndex = 4 + index;
+          if (moduleName && row[columnIndex] !== undefined) {
+            student.modules[moduleName] = row[columnIndex];
+          }
         });
-        return obj;
+
+        return student;
       });
 
-      setHeaders(extractedHeaders);
       setExtractedData(processedData);
       resolve();
     });
+  };
+
+  const getStudentsByModule = (moduleName) => {
+    return extractedData.filter(student => 
+      student.modules[moduleName] !== undefined
+    );
   };
 
   const downloadJson = () => {
     if (!extractedData) return;
     
     const dataToExport = {
+      fileInfo: fileInfo,
       sheetName: fileName.replace(/\.[^/.]+$/, ""),
-      headers: headers,
-      data: extractedData
+      students: extractedData,
+      modules: fileInfo.modules.reduce((acc, module) => {
+        acc[module] = getStudentsByModule(module);
+        return acc;
+      }, {})
     };
     
     const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { 
@@ -103,7 +149,7 @@ function Dashboard() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${fileName.replace(/\.[^/.]+$/, "")}_data.json`;
+    a.download = `${fileName.replace(/\.[^/.]+$/, "")}_module_lists.json`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -111,16 +157,10 @@ function Dashboard() {
   };
 
   return (
-    <>
-   
     <Container fluid className="py-4">
-      <h1>Excel Data Extractor</h1>
+      <h1>Student Exam Data Extractor</h1>
       <p className="mb-4">
-        Click the button to select and extract data from an Excel file.
-        <br />
-        <small className="text-muted">
-          (Skips first row completely, uses second row as headers, data starts from third row)
-        </small>
+        Click the button to select and extract student exam data from an Excel file.
       </p>
       
       <div className="d-flex gap-3 mb-4">
@@ -142,7 +182,7 @@ function Dashboard() {
               Processing...
             </>
           ) : (
-            'Select & Extract Excel File'
+            'Select & Extract Student Data'
           )}
         </Button>
         
@@ -156,7 +196,7 @@ function Dashboard() {
         
         {extractedData && (
           <Button variant="success" onClick={downloadJson}>
-            Download as JSON
+            Download Module Lists
           </Button>
         )}
       </div>
@@ -166,7 +206,7 @@ function Dashboard() {
           Selected file: <strong>{fileName}</strong>
           {extractedData && (
             <span className="ms-2">
-              ({extractedData.length} records extracted)
+              ({extractedData.length} student records extracted)
             </span>
           )}
         </Alert>
@@ -178,70 +218,128 @@ function Dashboard() {
         </Alert>
       )}
       
-      <Card className="mt-3">
-        <Card.Body>
-          <div className="table-responsive">
-            <Table striped bordered hover className="mb-0">
-              <thead>
-                <tr>
-                  {headers.map((header, index) => (
-                    <th key={index}>{header || `Column ${index + 1}`}</th>
-                  ))}
-                </tr>
-              </thead>
+      {fileInfo.university && (
+        <Card className="mb-3">
+          <Card.Header>File Information</Card.Header>
+          <Card.Body>
+            <Table bordered>
               <tbody>
-                { isLoading ? (
-                      <tr>
-                        <td colSpan={headers.length || 1} className="text-center py-4">
-                          <Spinner animation="border" />
-                          <p className="mt-2 mb-0">Processing file...</p>
-                        </td>
-                      </tr>
-                    ) : extractedData ? (
-                      extractedData.length > 0 ? (
-                        <>
-                          {   extractedData.slice(0, 100).map((row, rowIndex) => (
-                            <tr key={rowIndex}>
-                              {headers.map((header, colIndex) => (
-                                <td key={colIndex}>
-                                  {typeof row[header] === 'object' 
-                                    ? JSON.stringify(row[header])
-                                    : row[header]}
-                                </td>
-                              ))}
-                            </tr>
-                           ))
-                        }
-                          {extractedData.length > 100 && (
-                            <tr>
-                              <td colSpan={headers.length} className="text-center text-muted py-2">
-                                Showing first 100 of {extractedData.length} records
-                              </td>
-                            </tr>
-                          )}
-                        </>
-                      ) : (
-                        <tr>
-                          <td colSpan={headers.length} className="text-center text-muted py-4">
-                            No data rows found after header
-                          </td>
-                        </tr>
-                      )
-                    ) : (
-                      <tr>
-                        <td colSpan={headers.length || 1} className="text-center text-muted py-4">
-                          {headers.length ? "Data will appear here after extraction" : "No file selected"}
-                        </td>
-                      </tr>
-                    )
-                }
+                <tr>
+                  <th>University</th>
+                  <td>{fileInfo.university}</td>
+                </tr>
+                <tr>
+                  <th>Place</th>
+                  <td>{fileInfo.place}</td>
+                </tr>
+                <tr>
+                  <th>City</th>
+                  <td>{fileInfo.city}</td>
+                </tr>
+                <tr>
+                  <th>Description</th>
+                  <td>{fileInfo.description}</td>
+                </tr>
+                <tr>
+                  <th>Filiere</th>
+                  <td>{fileInfo.filiere}</td>
+                </tr>
+                <tr>
+                  <th>Modules</th>
+                  <td>{fileInfo.modules.join(', ')}</td>
+                </tr>
+                <tr>
+                  <th>Modules ID's</th>
+                  <td>{fileInfo.moduleIds.join(', ')}</td>
+                </tr>
               </tbody>
             </Table>
-          </div>
-        </Card.Body>
-      </Card>
+          </Card.Body>
+        </Card>
+      )}
+      
+      {extractedData && (
+        <Card>
+          <Card.Body>
+            <Tabs
+              activeKey={activeTab}
+              onSelect={(k) => setActiveTab(k)}
+              className="mb-3"
+            >
+              <Tab eventKey="all" title="All Students">
+                <div className="table-responsive mt-3">
+                  <Table striped bordered hover>
+                    <thead>
+                      <tr>
+                        <th>Student Code</th>
+                        <th>Massar Code</th>
+                        <th>Last Name</th>
+                        <th>First Name</th>
+                        {fileInfo.modules.map((module, i) => (
+                          <th key={i}>{module}</th>
+                        ))}
+                        <th>Room</th>
+                        <th>Place</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {extractedData.slice(0, 100).map((student, index) => (
+                        <tr key={index}>
+                          <td>{student.studentCode}</td>
+                          <td>{student.massarCode}</td>
+                          <td>{student.lastName}</td>
+                          <td>{student.firstName}</td>
+                          {fileInfo.modules.map((module, i) => (
+                            <td key={i}>{student.modules[module] || '-'}</td>
+                          ))}
+                          <td>{student.room}</td>
+                          <td>{student.placeNumber}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </Table>
+                </div>
+              </Tab>
+              
+              {fileInfo.modules.map((module) => (
+                <Tab key={module} eventKey={module} title={module}>
+                  <div className="table-responsive mt-3">
+                    <Table striped bordered hover>
+                      <thead>
+                        <tr>
+                          <th>#</th>
+                          <th>Student Code</th>
+                          <th>Massar Code</th>
+                          <th>Last Name</th>
+                          <th>First Name</th>
+                          <th>Grade</th>
+                          <th>Room</th>
+                          <th>Place</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {getStudentsByModule(module).map((student, index) => (
+                          <tr key={index}>
+                            <td>{index + 1}</td>
+                            <td>{student.studentCode}</td>
+                            <td>{student.massarCode}</td>
+                            <td>{student.lastName}</td>
+                            <td>{student.firstName}</td>
+                            <td>{student.modules[module]}</td>
+                            <td>{student.room}</td>
+                            <td>{student.placeNumber}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </Table>
+                  </div>
+                </Tab>
+              ))}
+            </Tabs>
+          </Card.Body>
+        </Card>
+      )}
     </Container>
-     </>
   );
 }
 
