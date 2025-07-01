@@ -1,0 +1,60 @@
+ .body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f0f0f0;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+.header {
+    font-size: 2.5rem;
+    font-weight: bold;
+    text-align: center;
+    padding: 20px;
+    color: #ffffff;
+    text-transform: uppercase;
+    background-color: #073b5c;
+    flex-shrink: 0;
+}
+
+.content-container {
+    flex: 1;
+    overflow: hidden;
+}
+
+.left-panel, .right-panel {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.left-panel {
+    background-color: #e9e9e9;
+    border-right: 1px solid #ccc;
+}
+
+.right-panel {
+    background-color: #f5f5f5;
+}
+
+.panel-title {
+    font-size: 1.5rem;
+    margin-bottom: 30px;
+    color: #444;
+}
+
+.Admin{
+    font-size: 2rem;
+    color: #555;
+    margin: 10px 0;
+    font-weight: bold
+}
+.oc{ font-size: 2rem;
+    color: #555;
+    margin: 10px 0;
+    font-weight: bold
+}

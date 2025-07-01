@@ -21,8 +21,19 @@
   }
   .app-name {
     color: rgb(7, 69, 144);
+    border-color:rgb(7, 69, 144);
+    font-weight: bold
   }
-  img {
+  .nna {
+    font-weight: bold
+    
+  }
+  .ter{
+    border-color:rgb(7, 69, 144);
+    color:rgb(7, 69, 144);
+
+  }
+  .img {
     width: max-content;
     height: 100px;
   }

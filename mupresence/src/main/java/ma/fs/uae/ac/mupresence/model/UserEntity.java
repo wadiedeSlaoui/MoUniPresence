@@ -1,8 +1,6 @@
 package ma.fs.uae.ac.mupresence.model;
 
-import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -13,12 +11,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.List;
 
 @Entity
 @Table(name = "users")
 @Data
-public class UserEntity implements UserDetails {
+public class UserEntity  implements UserDetails {
     @Id
     @GeneratedValue
     private Integer id;
@@ -51,6 +48,7 @@ public class UserEntity implements UserDetails {
 
     @Override
     public boolean isEnabled() {
-        return UserDetails.super.isEnabled();
+        return true;
     }
+
 }
