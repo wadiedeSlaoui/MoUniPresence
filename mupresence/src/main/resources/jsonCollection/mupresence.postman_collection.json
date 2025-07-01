@@ -1,19 +1,22 @@
 {
 	"info": {
-		"_postman_id": "a3f7e13b-dea6-4262-8e2d-0b9dff84dfc0",
-		"name": "mupresence",
+		"_postman_id": "e766751b-e2c7-42e3-9693-7f15d0f3f428",
+		"name": "product-trial-master",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "13922874"
 	},
 	"item": [
 		{
-			"name": "register",
+			"name": "Account",
+			"protocolProfileBehavior": {
+				"disabledSystemHeaders": {}
+			},
 			"request": {
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"matricule\":\"wadslaoui\",\r\n    \"password\":\"\",\r\n    \"mail\":\"\",\r\n    \"role\":[\"admin\"]\r\n}",
+					"raw": "{\r\n    \"username\":\"yaslaoui\",\r\n    \"password\": \"yaslaoui\",\r\n    \"firstname\": \"Yassine\",\r\n    \"email\":\"admin@admin.com\"\r\n}",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -21,7 +24,7 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/auth/register",
+					"raw": "http://localhost:8080/api/v1/auth/account",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -31,21 +34,75 @@
 						"api",
 						"v1",
 						"auth",
-						"register"
+						"account"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "test with cred",
+			"name": "Token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"let token = pm.response.text();\r",
+							"pm.environment.set(\"accessToken\", token);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"admin@admin.com\",\r\n    \"password\":\"yaslaoui\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/auth/token",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"auth",
+						"token"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "product list",
 			"request": {
 				"auth": {
 					"type": "bearer",
 					"bearer": [
 						{
 							"key": "token",
-							"value": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ5YXNsYW91aSIsImlhdCI6MTc0ODk1OTA2MSwiZXhwIjoxNzQ4OTk1MDYxfQ.zs2bfr9K_pMDjcBX5zpNMEqhkGojBcMxwIJZqBr_xsY",
+							"value": "{{accessToken}}",
 							"type": "string"
 						}
 					]
@@ -53,7 +110,7 @@
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1/user/test",
+					"raw": "http://localhost:8080/api/v1/products",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -62,20 +119,29 @@
 					"path": [
 						"api",
 						"v1",
-						"user",
-						"test"
+						"products"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "test Without Cred",
+			"name": "get product",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": "http://localhost:8080/api/v1/user/testWithoutCred",
+					"raw": "http://localhost:8080/api/v1/products/111",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -84,21 +150,31 @@
 					"path": [
 						"api",
 						"v1",
-						"user",
-						"testWithoutCred"
+						"products",
+						"111"
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "login",
+			"name": "Add new product",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
 				"method": "POST",
 				"header": [],
 				"body": {
 					"mode": "raw",
-					"raw": "{\r\n    \"username\":\"yaslaoui\",\r\n    \"password\":\"yaslaoui\"\r\n}",
+					"raw": "{\r\n    \"id\":111,\r\n    \"code\": \"f230fh0g21\",\r\n    \"name\": \"Bamboo Watch2\",\r\n    \"description\": \"Product Description\",\r\n    \"image\": \"bamboo-watch.jpg\",\r\n    \"price\": 65,\r\n    \"quantity\":11,\r\n    \"category\": \"Accessories\",\r\n    \"shellId\": 15,\r\n    \"internalReference\": \"REF-123-456\",\r\n    \"inventoryStatus\": \"INSTOCK\",\r\n    \"rating\": 5\r\n}\r\n",
 					"options": {
 						"raw": {
 							"language": "json"
@@ -106,7 +182,414 @@
 					}
 				},
 				"url": {
-					"raw": "http://localhost:8080/api/v1/auth/login",
+					"raw": "http://localhost:8080/api/v1/products",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"products"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":111,\r\n    \"code\": \"f230fh0g21\",\r\n    \"name\": \"Bamboo Watch3\",\r\n    \"description\": \"Product Description\",\r\n    \"image\": \"bamboo-watch.jpg\",\r\n    \"price\": 65,\r\n    \"quantity\":11,\r\n    \"category\": \"Accessories\",\r\n    \"shellId\": 15,\r\n    \"internalReference\": \"REF-123-456\",\r\n    \"inventoryStatus\": \"INSTOCK\",\r\n    \"rating\": 5\r\n}\r\n"
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/products/111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"products",
+						"111"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update product",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "PATCH",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"id\":111,\r\n    \"code\": \"f230fh0g21\",\r\n    \"name\": \"Bamboo Watch1\",\r\n    \"description\": \"Product Description\",\r\n    \"image\": \"bamboo-watch.jpg\",\r\n    \"price\": 65,\r\n    \"quantity\":11,\r\n    \"category\": \"Accessories\",\r\n    \"shellId\": 15,\r\n    \"internalReference\": \"REF-123-456\",\r\n    \"inventoryStatus\": \"INSTOCK\",\r\n    \"rating\": 5\r\n}\r\n",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/products/111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"products",
+						"111"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get Panel",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/panel",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"panel"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add into panel",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/panel?productId=111&number=3",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"panel"
+					],
+					"query": [
+						{
+							"key": "productId",
+							"value": "111"
+						},
+						{
+							"key": "number",
+							"value": "3"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Remove from panel",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/panel?productId=111&number=1",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"panel"
+					],
+					"query": [
+						{
+							"key": "productId",
+							"value": "111"
+						},
+						{
+							"key": "number",
+							"value": "1"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Drop panel",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/panel/drop",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"panel",
+						"drop"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get wishList",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/wishList",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"wishList"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Add product to wishlist",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/wishList?productId=111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"wishList"
+					],
+					"query": [
+						{
+							"key": "productId",
+							"value": "111"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "remove product from wishList",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/wishList?productId=111",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"wishList"
+					],
+					"query": [
+						{
+							"key": "productId",
+							"value": "111"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Drop wishlist",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "{{accessToken}}",
+							"type": "string"
+						}
+					]
+				},
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/api/v1/wishList/drop",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"api",
+						"v1",
+						"wishList",
+						"drop"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "http://localhost:8080/api/v1/auth/token",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"response is ok\",  ()=>{\r",
+							"    pm.response.to.have.status(200)\r",
+							"})\r",
+							"\r",
+							"var jsonData = JSON.parse(responseBody);\r",
+							"\r",
+							"pm.environment.set(\"accessToken\", jsonData);"
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"email\":\"admin@admin.com\",\r\n    \"password\":\"yaslaoui\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:8080/api/v1/auth/token",
 					"protocol": "http",
 					"host": [
 						"localhost"
@@ -116,7 +599,7 @@
 						"api",
 						"v1",
 						"auth",
-						"login"
+						"token"
 					]
 				}
 			},
