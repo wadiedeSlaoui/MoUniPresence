@@ -23,6 +23,7 @@ import Icons from "views/Icons.js";
 import Maps from "views/Maps.js";
 import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
+import ReportComponent from "components/report/ReportComponent";
 
 const dashboardRoutes = [
 
@@ -40,14 +41,14 @@ const dashboardRoutes = [
     component: UserProfile,
     layout: "/admin"
   },
-/* {
-    path: "/table",
-    name: "Table List",
+ {
+    path: "/report",
+    name: "Report",
     icon: "nc-icon nc-notes",
-    component: TableList,
+    component: ReportComponent,
     layout: "/admin"
   },
-  {
+/*  {
     path: "/typography",
     name: "Typography",
     icon: "nc-icon nc-paper-2",
