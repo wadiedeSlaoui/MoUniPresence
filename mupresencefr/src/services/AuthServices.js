@@ -10,6 +10,9 @@ class AuthService {
     user(username){
         return axios.get(User_API_BASE_URL+"/user/"+username);
     }
+    register(user){
+        return axios.post(User_API_BASE_URL+"/register",user);
+    }
    
 }
 

@@ -6,7 +6,6 @@ import { InputText } from 'primereact/inputtext';
 import { Button } from 'primereact/button';
 import { Dialog } from 'primereact/dialog';
 import { Dropdown } from 'primereact/dropdown';
-
 const UserList = () => {
   const mockUsers = Array.from({ length: 10 }, (_, i) => ({
     id: i + 1,
@@ -101,7 +100,6 @@ const UserList = () => {
         <Column field="firstName" header="First Name" style={{ minWidth: '120px' }} />
         <Column field="lastName" header="Last Name" style={{ minWidth: '120px' }} />
         <Column field="email" header="Email" style={{ minWidth: '200px' }} />
-        <Column field="password" header="Password" style={{ minWidth: '150px' }} />
         <Column header="Actions" body={actionTemplate} style={{ minWidth: '150px' }} />
       </DataTable>
 
@@ -146,7 +144,6 @@ const UserList = () => {
                 onChange={(e) => setEditingUser({ ...editingUser, password: e.target.value })}
               />
             </div>
-
             <div className="flex justify-content-end mt-4">
               <Button label="Cancel" icon="pi pi-times" className="p-button-text" onClick={() => setDialogVisible(false)}
                style={{ backgroundColor: '#f5f5f5', borderColor: '#8a8a8a', color: '#8a8a8a' }} />
