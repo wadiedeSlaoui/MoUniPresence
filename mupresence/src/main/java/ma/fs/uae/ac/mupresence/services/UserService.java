@@ -8,4 +8,6 @@ public interface UserService {
 
     void registerUser(UserDTO userDTO);
     String createAuthenticationToken (AuthRequest authRequest);
+
+    UserDTO getUser(String username);
 }

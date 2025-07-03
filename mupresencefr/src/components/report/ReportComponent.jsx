@@ -25,7 +25,6 @@ class ReportComponent extends Component {
     // get collaborator formation if user click in update
     componentDidMount(){
         this._isMounted = true;
-        sessionStorage.setItem('Survience',"Wadie Slaoui")
         this.state.filiereOptions = [{ value: "filierId", label: "Filier1" },{ value: "filierId2", label: "Filier2" }]
        
     }
@@ -79,7 +78,7 @@ class ReportComponent extends Component {
                                         <div className = "form-group">
                                             <label>  survience: </label>
                                             <input placeholder="Surv Name" name="survience" className="form-control" 
-                                                value={sessionStorage.getItem("Survience")} disabled/>
+                                                value={sessionStorage.getItem("fullName")} disabled/>
                                         </div>
                                         <div className = "form-group">
                                             <label> Filiere: </label>
