@@ -1,17 +1,15 @@
 import React, { Component } from 'react'
 //import collaboratorService from '../../servicees/CollaborateurServices';
 import Select from 'react-select';
-import {
-    Row,
-    Button
-   
-  } from "react-bootstrap";
+import '../report/report.css'
+
   
 class ReportComponent extends Component {
     constructor(props) {
         super(props)
 
         this.state = {
+            filiere:{},
             filiereOptions:[{ value: "filierId", label: "Filier1" },{ value: "filierId2", label: "Filier2" }] ,
             raison:""      
         }
@@ -41,20 +39,23 @@ class ReportComponent extends Component {
     saveOrUpdateReport = (e) => {
         this._isMounted = true;
              e.preventDefault();
-        if(this.state.filiere==="" ){
+        if(this.state.filiere.value == undefined ){
            this.errors('filiere')
-        }   
-     
+        }
+         if   (this.state.raison === "" ){
+           this.errors('raison')
+        }
+         
     }
         
         
     
     
     changeFiliereHandler= (event) => {
-        this.setState({filiere: event.value});
+        this.setState({filiere: event});
     }
     changeRaisonHandler= (event) => {
-        this.setState({filiere: event.target.value});
+        this.setState({raison: event.target.value});
     }
     
     cancel(){
@@ -70,14 +71,14 @@ class ReportComponent extends Component {
                         <div className = "row">
                             <div className = "card col-md-6 offset-md-3 offset-md-3">
                                 
-                                <h1 style={{textAlign:"center"}}>Report</h1>
+                                <h1 style={{textAlign:"center", fontWeight:'bold'}}>Report</h1>
                                 
                                 <div className = "card-body">
                                     <form>
                                     
                                         
                                         <div className = "form-group">
-                                            <label>  survience: </label>
+                                            <label>  surveillant: </label>
                                             <input placeholder="Surv Name" name="survience" className="form-control" 
                                                 value={sessionStorage.getItem("Survience")} disabled/>
                                         </div>
@@ -92,15 +93,45 @@ class ReportComponent extends Component {
                                                     choisir Filiere.
                                                 </div>
                                         </div>
-                                       <div className = "form-group">
-                                            <label>Raison:</label>
-                                            <textarea class="form-control" placeholder="Entrer la raison" onChange={this.changepasswordHandler} style={{height: "100px"}}></textarea>
-                                            <div className="hidden-error text-danger raison" style={{display:"none"}}>
-                                                    choisir la raison.
+                                        <div className = "form-group">
+                                            <label> Module: </label>
+                                            <Select 
+                                                value={this.state.module}
+                                                 onChange={change=>this.changeModuleHandler(change)}
+                                                 options={this.state.filiereOptions}
+                                                 />
+                                               <div className="hidden-error text-danger filiere" style={{display:"none"}}>
+                                                    choisir le module.
                                                 </div>
                                         </div>
-                                        <button className="btn btn-success"  onClick={this.saveOrUpdateReport}>Save</button>
-                                        <button className="btn btn-danger" onClick={this.cancel.bind(this)} style={{marginLeft: "10px"}}>Cancel</button>
+                                        <div className = "form-group">
+                                            <label> Le cas  </label>
+                                            <Select 
+                                                value={this.state.module}
+                                                 onChange={change=>this.changeModuleHandler(change)}
+                                                 options={this.state.filiereOptions}
+                                                 />
+                                               <div className="hidden-error text-danger filiere" style={{display:"none"}}>
+                                                    choisir le cas.
+                                                </div>
+                                        </div>
+                                        <div className = "form-group">
+                                            <label> nom et prénom </label>
+                                            <input placeholder="Full Name" name="nom et prénom" className="form-control" type='text'/>
+                                        </div>
+                                        <div className = "form-group">
+                                            <label> N° Apogee </label>
+                                            <input placeholder="Entrer l'apogee" name="N° Apogee" className="form-control" type='text'/>
+                                        </div>          
+                                       <div className = "form-group">
+                                            <label>Description</label>
+                                            <textarea class="form-control" placeholder="Entrer la raison" onChange={this.changepasswordHandler} style={{height: "100px"}}></textarea>
+                                            <div className="hidden-error text-danger raison" style={{display:"none"}}>
+                                                    saisir le texte.
+                                                </div>
+                                        </div>
+                                        <button className="btn btn-success tre"  onClick={this.saveOrUpdateReport}>Save</button>
+                                        <button className="btn btn-danger trr" onClick={this.cancel.bind(this)} style={{marginLeft: "10px"}}>Cancel</button>
                                         <span className="hidden-error text-danger error" style={{display:"none" , paddingLeft:"20px"}}>Error</span>
                                     </form>
                                 </div>

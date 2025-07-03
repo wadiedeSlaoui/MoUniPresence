@@ -24,6 +24,9 @@ import Maps from "views/Maps.js";
 import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
 import ReportComponent from "components/report/ReportComponent";
+import StudentList from "studentlist/Studentlist";
+import listeUser from "listeUser/listeUser" 
+
 
 const dashboardRoutes = [
 
@@ -46,6 +49,20 @@ const dashboardRoutes = [
     name: "Report",
     icon: "nc-icon nc-notes",
     component: ReportComponent,
+    layout: "/admin"
+  },
+  {
+      path: "/studentlist",
+    name: "Studentlist",
+    icon: "nc-icon nc-notes",
+    component: StudentList,
+    layout: "/admin"
+  },
+ {
+    path: "/listeUser",
+    name: "listeUser",
+    icon: "nc-icon nc-notes",
+    component: listeUser,
     layout: "/admin"
   },
 /*  {
