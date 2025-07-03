@@ -1,7 +1,7 @@
 import React from 'react'
 
 import Logo from './logo.png'
-//import AuthService from '../servicees/AuthServices';
+import AuthService from '../../services/AuthServices';
 import '../Login/Login.css'
 import { withRouter } from 'react-router-dom';
  class Login extends React.Component{
@@ -24,38 +24,38 @@ import { withRouter } from 'react-router-dom';
     login = (e) => {
       e.preventDefault();     
       sessionStorage.setItem('token',"");
+      sessionStorage.setItem('roleUser',"");
       sessionStorage.setItem('user',"");
-      sessionStorage.setItem('user1',"");
-      this.props.history.push('/admin/dashboard');
-        
-         /* AuthService.user(this.state.username, this.state.password).then( res => {
-            sessionStorage.setItem('user',JSON.stringify(res.data.id))
-            sessionStorage.setItem('user1',JSON.stringify(res.data))
-            sessionStorage.setItem('country',JSON.stringify(res.data.country))
-            console.log(res.data)
+      sessionStorage.setItem('fullName',"");
+             
+    AuthService.login(this.state.username, this.state.password).then( res => {
+          sessionStorage.setItem('token',res.data);
+          AuthService.user(this.state.username).then( res => {
+            sessionStorage.setItem('user',res.data.matricule);
+            sessionStorage.setItem('fullName',res.data.fullName);
+            if(res.data.role.includes(sessionStorage.getItem('role'))){
+                sessionStorage.setItem('roleRole',res.data.role);
+                if(sessionStorage.getItem('role') == "ADMIN"){
+                    this.props.history.push('/admin/dashboard');
+                }else{
+                    this.props.history.push('/surv/dashboard');
+                }
+            }else{
+                 document.querySelector('.hidden-error1').style.display = "block";
+          
+                 setTimeout(function(){document.querySelector('.hidden-error1').style.display = "none"},2000) 
+            }
             
-        },err=> {
-          console.log("")
         })
-          AuthService.role(this.state.username, this.state.password).then( res => {
-            sessionStorage.setItem('role',JSON.stringify(res.data).replace('"','').slice(0, -1))
-        },err=> {
-          console.log("")
-        }
-        
-        )
-        
-        AuthService.login(this.state.username, this.state.password).then( res => {
-          sessionStorage.setItem('token',JSON.stringify(res.data.token).replace('"','').slice(0, -1))
-          this.props.history.push('/admin/Home');
+          
         },
         err=> {
           let x= document.querySelector('.hidden-error').style.display = "block";
           
-          setTimeout(function(){document.querySelector('.hidden-error').style.display = "none"},1200) 
+          setTimeout(function(){document.querySelector('.hidden-error').style.display = "none"},2000) 
         }
         
-        )*/
+        )
       
     
       }
@@ -86,6 +86,9 @@ import { withRouter } from 'react-router-dom';
                             </div>
                                     <div className="hidden-error text-danger" style={{display:"none"}}>
                                         Incorrect Username/Email or password. Enter the correct EMail and password and try again.
+                                    </div>
+                                     <div className="hidden-error1 text-danger" style={{display:"none"}}>
+                                        Correct credentiels but you are not {sessionStorage.getItem("role")}.
                                     </div>
                                     <form action="">
                                         <div className="container-sm element-margin">

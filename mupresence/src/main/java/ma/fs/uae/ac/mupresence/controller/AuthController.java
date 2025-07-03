@@ -4,10 +4,7 @@ package ma.fs.uae.ac.mupresence.controller;
 import ma.fs.uae.ac.mupresence.dto.AuthRequest;
 import ma.fs.uae.ac.mupresence.dto.UserDTO;
 import ma.fs.uae.ac.mupresence.services.UserService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -27,6 +24,11 @@ public class AuthController {
     @PostMapping("/register")
     public void register ( @RequestBody UserDTO user){
          userService.registerUser(user);
+    }
+
+    @GetMapping("/user/{username}")
+    public UserDTO getUser ( @PathVariable String username){
+        return userService.getUser(username);
     }
 
 

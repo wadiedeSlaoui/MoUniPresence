@@ -59,5 +59,10 @@ public class UserServiceImpl implements UserService {
         return jwtUtil.generateToken(userDetails);
     }
 
+    @Override
+    public UserDTO getUser(String username) {
+        return userMapper.userToUserDTO(userRepository.findByUsername(username).get());
+    }
+
 
 }

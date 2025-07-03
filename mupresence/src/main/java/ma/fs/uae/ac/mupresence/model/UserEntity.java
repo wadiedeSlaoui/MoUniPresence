@@ -20,6 +20,7 @@ public class UserEntity  implements UserDetails {
     @GeneratedValue
     private Integer id;
     private String username;
+    private String fullName;
     private String password;
     private String mail;
     private Long codeValidation;
