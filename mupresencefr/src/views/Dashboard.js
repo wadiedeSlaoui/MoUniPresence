@@ -90,7 +90,7 @@ function Dashboard() {
         place: jsonData[1][0] || "",
         city: jsonData[2][0] || "",
         description: jsonData[3][0] || "",
-        filiere: jsonData[4][0] || "",
+        filiere: jsonData[4][0].replace("Parcours: ","") || "",
         modules: moduleNames,
         moduleIds:moduleIds
       };
@@ -126,7 +126,7 @@ function Dashboard() {
 
   const getStudentsByModule = (moduleName) => {
     return extractedData.filter(student => 
-      student.modules[moduleName] !== undefined
+      student.modules[moduleName] !== undefined || student.modules[moduleName] !== 'V' 
     );
   };
 
