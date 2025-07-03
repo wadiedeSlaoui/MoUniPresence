@@ -8,21 +8,17 @@ import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
 import org.mapstruct.ReportingPolicy;
 
+import java.util.List;
+
 @Mapper(componentModel = "spring", unmappedTargetPolicy = ReportingPolicy.IGNORE, unmappedSourcePolicy = ReportingPolicy.IGNORE)
 public interface UserMapper {
-    @Mapping(target = "matricule", source = "username")
-    @Mapping(target = "codeValidation", source = "codeValidation")
-    @Mapping(target = "mail", source = "mail")
-    @Mapping(target = "password", source = "password")
-    @Mapping(target = "role", source = "role")
+
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     UserDTO userToUserDTO(UserEntity user);
 
-    @Mapping(target = "username", source = "matricule")
-    @Mapping(target = "codeValidation", source = "codeValidation")
-    @Mapping(target = "mail", source = "mail")
-    @Mapping(target = "password", source = "password")
-    @Mapping(target = "role", source = "role")
+
     @BeanMapping(unmappedTargetPolicy = ReportingPolicy.IGNORE)
     UserEntity userDTOToUser(UserDTO user);
+
+    List<UserDTO> listUserEntityToUserDTO(List<UserEntity> userEntities);
 }

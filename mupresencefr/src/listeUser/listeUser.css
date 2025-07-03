@@ -13,3 +13,7 @@
   border-color: rgb(7, 69, 144) !important;
   color: white !important;
 }
+.p-link{
+    background-color: none;
+    padding: none;
+}

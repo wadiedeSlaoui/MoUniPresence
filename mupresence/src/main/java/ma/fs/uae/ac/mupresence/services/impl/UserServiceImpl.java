@@ -16,6 +16,8 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -62,6 +64,11 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDTO getUser(String username) {
         return userMapper.userToUserDTO(userRepository.findByUsername(username).get());
+    }
+
+    @Override
+    public List<UserDTO> getUsers() {
+        return userMapper.listUserEntityToUserDTO(userRepository.findAll());
     }
 
 
