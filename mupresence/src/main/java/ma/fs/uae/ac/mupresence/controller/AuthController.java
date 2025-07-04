@@ -5,7 +5,6 @@ import ma.fs.uae.ac.mupresence.dto.AuthRequest;
 import ma.fs.uae.ac.mupresence.dto.UserDTO;
 import ma.fs.uae.ac.mupresence.services.UserService;
 import org.springframework.web.bind.annotation.*;
-
 @RestController
 @RequestMapping("/api/v1/auth")
 public class AuthController {

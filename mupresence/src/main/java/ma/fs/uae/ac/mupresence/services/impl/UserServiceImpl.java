@@ -17,6 +17,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -70,6 +71,35 @@ public class UserServiceImpl implements UserService {
     public List<UserDTO> getUsers() {
         return userMapper.listUserEntityToUserDTO(userRepository.findAll());
     }
+    @Override
+    public void deleteUser(String username) {
+        Optional<UserEntity> user = userRepository.findByUsername(username);
+        if(user.isEmpty()){
+            throw new RuntimeException("User not found with username: " + username);
+        }
+        userRepository.delete(user.get());
 
+    }
+
+    @Override
+    public UserDTO updateUser(String username, UserDTO userDTO) {
+        UserEntity user = userRepository.findByUsername(username)
+                .orElseThrow(() -> new RuntimeException("User not found with Username: " + username));
+
+        // Update fields
+        user.setUsername(userDTO.getUsername());
+        user.setLastName(userDTO.getLastName());
+        user.setFirstName(userDTO.getFirstName());
+        user.setMail(userDTO.getMail());
+        user.setRole(userDTO.getRole());
+
+        // Only encode if password changed
+        if (userDTO.getPassword() != null && !userDTO.getPassword().isBlank()) {
+            user.setPassword(passwordEncoder.encode(userDTO.getPassword()));
+        }
+
+        UserEntity updated = userRepository.save(user);
+        return userMapper.userToUserDTO(updated);
+    }
 
 }
