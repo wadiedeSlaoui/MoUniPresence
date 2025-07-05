@@ -11,16 +11,25 @@ import { ConfirmDialog } from 'primereact/confirmdialog';
 import { confirmDialog } from 'primereact/confirmdialog';
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import '../listeUser/listeUser.css'
+import { useEffect } from 'react';
+import Loading from '../components/Loading';
+
+
+
 const UserList = () => {
+    const [loading, setLoading] = React.useState(false);
 React.useEffect(() => {
+    setLoading(true);
   UserService.getetUsers()
     .then((res) => {
+        setLoading(false);
       setUsers(res.data.map(user => {
         user.role = user.role.replace("ROLE_","");
         return user;
       }));
     })
     .catch((err) => {
+        setLoading(false);
       console.error("Erreur lors du chargement des utilisateurs", err);
     });
 }, []);

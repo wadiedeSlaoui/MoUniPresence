@@ -9,6 +9,8 @@ class ReportComponent extends Component {
         super(props)
 
         this.state = {
+            cas:{},
+            CasOptions:[{ value: "cas", label: "etudiant n'est pas inscris" },{ value: "cas1", label: "Cas de tricherie" }],
             filiere:{},
             filiereOptions:[{ value: "filierId", label: "Filier1" },{ value: "filierId2", label: "Filier2" }] ,
             raison:""      
@@ -24,7 +26,7 @@ class ReportComponent extends Component {
     componentDidMount(){
         this._isMounted = true;
         this.state.filiereOptions = [{ value: "filierId", label: "Filier1" },{ value: "filierId2", label: "Filier2" }]
-       
+        this.state.CasOptions = [{ value: "cas", label: "etudiant n'est pas inscris" },{ value: "cas1", label: "Cas de tricherie" }]
     }
     //errors for  formation not inputed
     errors = (x) =>{
@@ -106,9 +108,9 @@ class ReportComponent extends Component {
                                         <div className = "form-group">
                                             <label> Le cas  </label>
                                             <Select 
-                                                value={this.state.module}
+                                                value={this.state.cas}
                                                  onChange={change=>this.changeModuleHandler(change)}
-                                                 options={this.state.filiereOptions}
+                                                 options={this.state.CasOptions}
                                                  />
                                                <div className="hidden-error text-danger filiere" style={{display:"none"}}>
                                                     choisir le cas.
