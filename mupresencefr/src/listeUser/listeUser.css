@@ -18,9 +18,9 @@
     padding: none;
 }
 .p-input-icon-right > i {
-  top: 50%;
+ top: 50%;
   transform: translateY(-50%);
   right: 0.75rem;
   position: absolute;
-  color: #6b7280; /* Optional: gray-500 for example */
+  color: #6b7280; /* Optional: gray-500 for example */ 
 }
