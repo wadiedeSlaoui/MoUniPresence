@@ -6,6 +6,8 @@ import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
 
+import java.util.Date;
+
 
 @Entity
 @Table(name = "Rapport")
@@ -14,8 +16,13 @@ public class RaportEntity {
     @Id
     @GeneratedValue
     private int idRapport;
-    private int IdExamen;
-    private String content;
-    private int dateGeneration;
+    private String surveillant;
+    private String filiere;
+    private String module;
+    private String leCas;
+    private String studentFullName;
+    private String nuApogee;
+    private String description;
+    private Date dateGeneration;
 
 }

@@ -1,7 +1,6 @@
 package ma.fs.uae.ac.mupresence.controller;
 
 import ma.fs.uae.ac.mupresence.dto.UserDTO;
-import ma.fs.uae.ac.mupresence.model.UserEntity;
 import ma.fs.uae.ac.mupresence.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +15,11 @@ public class UserController {
     @GetMapping
     public List<UserDTO> getAllUsers() {
         return userService.getUsers();
+    }
+
+    @GetMapping("/surv")
+    public List<UserDTO> getAllSurveillant(){
+        return userService.getSurveillat();
     }
     @DeleteMapping("/{username}")
     public ResponseEntity<Void> deleteUser(@PathVariable String username) {

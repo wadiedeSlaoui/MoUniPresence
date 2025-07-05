@@ -13,6 +13,9 @@ class UserService {
   getetUsers() {
     return axios.get(User_API_BASE_URL);
   }
+  getSurveillant(){
+    return axios.get(User_API_BASE_URL + "/surv");
+  }
 
   deleteUser(id) {
     return axios.delete(User_API_BASE_URL+`/${id}`); 

@@ -46,7 +46,7 @@ public class PresenceServiceImpl implements PresenceService {
                     presenseDTO.setRoom(room);
                     presenseDTO.setModule(moduleEntity.getNom());
                     Optional<PresenceEntity> presenceEntity = presenseRepository.findByModuleEntityAndRoom(moduleEntity, room);
-                    presenceEntity.ifPresent(entity -> presenseDTO.setSurvaillant(entity.getSurv().getFirstName() +" "+ entity.getSurv().getLastName()));
+                    presenceEntity.ifPresent(entity -> presenseDTO.setSurvaillant(entity.getSurv().getUsername()));
                     presenseDTOList.add(presenseDTO);
                 }
             }
@@ -63,15 +63,19 @@ public class PresenceServiceImpl implements PresenceService {
             PresenceEntity presense;
             if (presenceEntity.isEmpty()) {
                 presense = new PresenceEntity();
-                presense.setSurv(userRepository.findByFirstNameAndLastName(presenseDTO.getSurvaillant().split(" ")[0], presenseDTO.getSurvaillant().split(" ")[1]));
+                presense.setSurv(userRepository.findByUsername(presenseDTO.getSurvaillant()).orElse(null));
                 presense.setModuleEntity(module);
                 presense.setRoom(presenseDTO.getRoom());
                 presense.setExams(examRepository.findByModuleEntityAndSalle(module, presense.getRoom()));
             } else {
                 presense = presenceEntity.get();
-                presense.setSurv(userRepository.findByFirstNameAndLastName(presenseDTO.getSurvaillant().split(" ")[0], presenseDTO.getSurvaillant().split(" ")[1]));
+                presense.setSurv(userRepository.findByUsername(presenseDTO.getSurvaillant()).orElse(null));
             }
-            presenseRepository.save(presense);
+            if (presense.getSurv() == null && presense.getIdPres() != null) {
+                presenseRepository.deleteById(presense.getIdPres());
+            } else if (presense.getSurv() != null) {
+                presenseRepository.save(presense);
+            }
         }
         return listPresense();
     }
