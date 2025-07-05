@@ -1,0 +1,26 @@
+.aoa{
+  background-color: rgb(7, 69, 144) !important;
+  border-color: rgb(7, 69, 144) !important;
+  color: white !important;
+}
+.aaa{
+  background-color: rgb(7, 69, 144) !important;
+  border-color: rgb(7, 69, 144) !important;
+  color: white !important;
+}
+.azz{
+  background-color: rgb(7, 69, 144) !important;
+  border-color: rgb(7, 69, 144) !important;
+  color: white !important;
+}
+.p-link{
+    background-color: none;
+    padding: none;
+}
+.p-input-icon-right > i {
+ top: 50%;
+  transform: translateY(-50%);
+  right: 0.75rem;
+  position: absolute;
+  color: #6b7280; /* Optional: gray-500 for example */ 
+}

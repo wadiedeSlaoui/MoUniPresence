@@ -69,14 +69,14 @@ const dashboardRoutes = [
    {
     path: "/ListExam",
     name: "liste des exams",
-    icon: "nc-icon nc-badge",
+    icon: "nc-icon nc-bullet-list-67",
     component: ListExam,
     layout: "/admin"
   },
      {
     path: "/ReportList",
     name: "liste des rapports",
-    icon: "nc-icon nc-badge",
+    icon: "nc-icon nc-align-left-2",
     component: ReportList,
     layout: "/admin"
   },
