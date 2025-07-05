@@ -4,6 +4,9 @@ import Logo from './logo.png'
 import AuthService from '../../services/AuthServices';
 import '../Login/Login.css'
 import { withRouter } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import Loading from '../Loading';
+  
  class Login extends React.Component{
     constructor(props) {
         super(props)
@@ -11,54 +14,63 @@ import { withRouter } from 'react-router-dom';
       this.state = {
             id: "",
             password:"",  
-            username:""
+            username:"",
+            loading: false
 
         }
         this.changeusernameHandler = this.changeusernameHandler.bind(this);
         this.changepasswordHandler = this.changepasswordHandler.bind(this);
         
+        this.errorRef = React.createRef();
+        this.errorRoleRef = React.createRef();
         this.login = this.login.bind(this);
     }
-     
    
-    login = (e) => {
-      e.preventDefault();     
-      sessionStorage.setItem('token',"");
-      sessionStorage.setItem('roleUser',"");
-      sessionStorage.setItem('user',"");
-      sessionStorage.setItem('fullName',"");
-             
-    AuthService.login(this.state.username, this.state.password).then( res => {
-          sessionStorage.setItem('token',res.data);
-          AuthService.user(this.state.username).then( res => {
-            sessionStorage.setItem('user',res.data.matricule);
-            sessionStorage.setItem('fullName',res.data.fullName);
-            if(res.data.role.includes(sessionStorage.getItem('role'))){
-                sessionStorage.setItem('roleRole',res.data.role);
-                if(sessionStorage.getItem('role') == "ADMIN"){
+   login = (e) => {
+        e.preventDefault();
+
+        // ✅ Use setState to trigger re-render
+        this.setState({ loading: true }, () => 
+        {
+            sessionStorage.setItem('token', "");
+            sessionStorage.setItem('roleUser', "");
+            sessionStorage.setItem('user', "");
+            sessionStorage.setItem('fullName', "");
+
+            AuthService.login(this.state.username, this.state.password).then(res => {
+            sessionStorage.setItem('token', res.data);
+
+            AuthService.user(this.state.username).then(res => {
+                sessionStorage.setItem('user', res.data.matricule);
+                sessionStorage.setItem('fullName', res.data.fullName);
+
+                // ✅ stop loading
+                this.setState({ loading: false });
+
+                if (res.data.role.includes(sessionStorage.getItem('role'))) {
+                sessionStorage.setItem('roleRole', res.data.role);
+                if (sessionStorage.getItem('role') === "ADMIN") {
                     this.props.history.push('/admin/dashboard');
-                }else{
+                } else {
                     this.props.history.push('/surv/dashboard');
                 }
-            }else{
-                 document.querySelector('.hidden-error1').style.display = "block";
-          
-                 setTimeout(function(){document.querySelector('.hidden-error1').style.display = "none"},2000) 
-            }
-            
-        })
-          
-        },
-        err=> {
-          let x= document.querySelector('.hidden-error').style.display = "block";
-          
-          setTimeout(function(){document.querySelector('.hidden-error').style.display = "none"},2000) 
-        }
-        
-        )
-      
-    
-      }
+                } else {
+               this.errorRoleRef.current.style.display = "block";
+                setTimeout(() => {
+                    if (this.errorRoleRef.current) this.errorRoleRef.current.style.display = "none";
+                }, 2000);
+                }
+            });
+
+            }).catch(err => {
+            this.setState({ loading: false }); // ✅ stop loading on error
+            this.errorRef.current.style.display = "block";
+            setTimeout(() => {
+                 if (this.errorRef.current) this.errorRef.current.style.display = "none";
+            }, 2000);
+        });
+        });
+    }
   
       changeusernameHandler= (event) => {
         this.setState({username: event.target.value});
@@ -68,8 +80,11 @@ import { withRouter } from 'react-router-dom';
         this.setState({password: event.target.value});
     }
     render() {
+         
         return (
+            
             <div className="body">
+                {this.state.loading && <Loading />}
                    <div className="propre-container ">
 
 
@@ -84,11 +99,12 @@ import { withRouter } from 'react-router-dom';
                             <div className="app-name">
                                             <h4 className='nna'>{sessionStorage.getItem("role")}</h4>
                             </div>
-                                    <div className="hidden-error text-danger" style={{display:"none"}}>
-                                        Incorrect Username/Email or password. Enter the correct EMail and password and try again.
+                                    <div ref={this.errorRef} className="hidden-error text-danger" style={{ display: "none" }}>
+                                            Incorrect Username/Email or password.
                                     </div>
-                                     <div className="hidden-error1 text-danger" style={{display:"none"}}>
-                                        Correct credentiels but you are not {sessionStorage.getItem("role")}.
+
+                                    <div ref={this.errorRoleRef} className="hidden-error1 text-danger" style={{ display: "none" }}>
+                                             Correct credentials but you are not {sessionStorage.getItem("role")}.
                                     </div>
                                     <form action="">
                                         <div className="container-sm element-margin">

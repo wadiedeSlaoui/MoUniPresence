@@ -25,8 +25,9 @@ import Notifications from "views/Notifications.js";
 import Upgrade from "views/Upgrade.js";
 import ReportComponent from "components/report/ReportComponent";
 import StudentList from "studentlist/Studentlist";
-import listeUser from "listeUser/listeUser" 
-
+import listeUser from "listeUser/listeUser"
+import ListExam from "ListExam/ListExam"; 
+import ReportList from "ReportList/ReportList";
 
 const dashboardRoutes = [
 
@@ -39,30 +40,44 @@ const dashboardRoutes = [
   },
   {
     path: "/user",
-    name: "User Profile",
-    icon: "nc-icon nc-circle-09",
+    name: "Créer un profile",
+    icon: "nc-icon nc-simple-add",
     component: UserProfile,
     layout: "/admin"
   },
  {
     path: "/report",
-    name: "Report",
-    icon: "nc-icon nc-notes",
+    name: "Rapport",
+    icon: "nc-icon nc-paper-2",
     component: ReportComponent,
     layout: "/admin"
   },
   {
       path: "/studentlist",
-    name: "Studentlist",
+    name: "Liste des étudiants",
     icon: "nc-icon nc-notes",
     component: StudentList,
     layout: "/admin"
   },
  {
     path: "/listeUser",
-    name: "listeUser",
-    icon: "nc-icon nc-notes",
+    name: "liste des utilisateurs",
+    icon: "nc-icon nc-badge",
     component: listeUser,
+    layout: "/admin"
+  },
+   {
+    path: "/ListExam",
+    name: "liste des exams",
+    icon: "nc-icon nc-badge",
+    component: ListExam,
+    layout: "/admin"
+  },
+     {
+    path: "/ReportList",
+    name: "liste des rapports",
+    icon: "nc-icon nc-badge",
+    component: ReportList,
     layout: "/admin"
   },
 /*  {
