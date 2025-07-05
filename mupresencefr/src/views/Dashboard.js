@@ -2,6 +2,7 @@ import React, { useState, useRef } from "react";
 import * as XLSX from "xlsx";
 import { Button, Card, Container, Table, Spinner, Alert, Tab, Tabs } from "react-bootstrap";
 import "style/dashboard.css";
+import importDataExService from "services/importDataExService";
 
 function Dashboard() {
   const [extractedData, setExtractedData] = useState(null);
@@ -100,13 +101,13 @@ function Dashboard() {
 
       const processedData = dataRows.map((row) => {
         const student = {
-          studentCode: row[0] || '',
+          COD_ETU: row[0] || '',
           massarCode: row[1] || '',
           lastName: row[2] || '',
           firstName: row[3] || '',
           modules: {},
-          room: row[row.length - 2] || '',
-          placeNumber: row[row.length - 1] || ''
+          room: row[row.length - 3] || '',
+          placeNumber: row[row.length - 2] || ''
         };
 
         moduleNames.forEach((moduleName, index) => {
@@ -130,30 +131,25 @@ function Dashboard() {
     );
   };
 
-  const downloadJson = () => {
+  const sendImportedData = () => {
     if (!extractedData) return;
     
     const dataToExport = {
-      fileInfo: fileInfo,
-      sheetName: fileName.replace(/\.[^/.]+$/, ""),
-      students: extractedData,
-      modules: fileInfo.modules.reduce((acc, module) => {
-        acc[module] = getStudentsByModule(module);
-        return acc;
-      }, {})
+      filiere:fileInfo.filiere,
+      year:fileInfo.description.slice(-9),
+      session:fileInfo.description.includes("rattrapage") ? "rattrapage" : "normal",
+      modules: fileInfo.modules.map( (x, i) =>{
+        return {"moduleName": x, "moduleId": fileInfo.moduleIds[i],students : extractedData.filter(student => 
+            student.COD_ETU !== undefined && student.COD_ETU !== '' && student.modules[x] !== "V"
+      )}})
     };
-    
-    const blob = new Blob([JSON.stringify(dataToExport, null, 2)], { 
-      type: 'application/json' 
-    });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `${fileName.replace(/\.[^/.]+$/, "")}_module_lists.json`;
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-    URL.revokeObjectURL(url);
+    importDataExService.ImportDataEx(dataToExport).then(res=>{
+      alert("saving data complete succefully");
+    }, 
+    err =>{
+      alert("error when saving data");
+    })
+    console.log(dataToExport)
   };
 
   return (
@@ -195,7 +191,7 @@ function Dashboard() {
         />
         
         {extractedData && (
-          <Button variant="success" onClick={downloadJson}>
+          <Button variant="success" onClick={sendImportedData}>
             Download Module Lists
           </Button>
         )}
@@ -285,7 +281,7 @@ function Dashboard() {
                     <tbody>
                       {extractedData.slice(0, 100).map((student, index) => (
                         <tr key={index}>
-                          <td>{student.studentCode}</td>
+                          <td>{student.COD_ETU}</td>
                           <td>{student.massarCode}</td>
                           <td>{student.lastName}</td>
                           <td>{student.firstName}</td>
@@ -321,7 +317,7 @@ function Dashboard() {
                         {getStudentsByModule(module).map((student, index) => (
                           <tr key={index}>
                             <td>{index + 1}</td>
-                            <td>{student.studentCode}</td>
+                            <td>{student.COD_ETU}</td>
                             <td>{student.massarCode}</td>
                             <td>{student.lastName}</td>
                             <td>{student.firstName}</td>

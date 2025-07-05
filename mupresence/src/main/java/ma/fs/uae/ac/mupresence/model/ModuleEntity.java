@@ -1,9 +1,6 @@
 package ma.fs.uae.ac.mupresence.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
 
 @Entity
@@ -11,9 +8,10 @@ import lombok.Data;
 @Data
 public class ModuleEntity {
     @Id
-    @GeneratedValue
-    private int idModule;
+    private String idModule;
     private String nom;
     private String semestre;
-    private int idfiliere;
+    @ManyToOne
+    @JoinColumn(name="id_filiere", nullable=false)
+    private FiliereEntity filiereEntity;
 }
