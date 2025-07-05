@@ -155,7 +155,7 @@ const handleSave = () => {
         <Column field="firstName" header="First Name" style={{ minWidth: '120px' }} />
         <Column field="lastName" header="Last Name" style={{ minWidth: '120px' }} />
         <Column field="username" header="Username" style={{ minWidth: '120px' }} />
-                <Column field="mail" header="Email" style={{ minWidth: '200px' }} />
+        <Column field="mail" header="Email" style={{ minWidth: '200px' }} />
         <Column header="Actions" body={actionTemplate} style={{ minWidth: '150px' }} />
       </DataTable>
 

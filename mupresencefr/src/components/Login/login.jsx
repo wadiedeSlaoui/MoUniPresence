@@ -83,9 +83,33 @@ import Loading from '../Loading';
          
         return (
             
+            
             <div className="body">
+                <div style={{ position: 'relative' }}>
+  <button
+    className="btn btn-outline-primary"
+    style={{
+      color:'white',
+      borderColor:'white',  
+      position: 'absolute',
+      top: '10px',
+      left: '10px',
+      zIndex: 10
+    }}
+    onClick={() => this.props.history.goBack()}
+  >
+    <i className="pi pi-arrow-left" style={{ marginRight: '5px' }}></i> Retour
+  </button>
+
+  {/* Card content */}
+  <div className="card">
+    {/* Login form */}
+  </div>
+</div>
+
                 {this.state.loading && <Loading />}
                    <div className="propre-container ">
+                    
 
 
                 <div className="container   mx-auto">
@@ -131,6 +155,7 @@ import Loading from '../Loading';
                 </div>
 
             </div>
+            
             </div>
            
         );

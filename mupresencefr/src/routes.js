@@ -47,7 +47,7 @@ const dashboardRoutes = [
   },
  {
     path: "/report",
-    name: "Rapport",
+    name: "Créer un rapport",
     icon: "nc-icon nc-paper-2",
     component: ReportComponent,
     layout: "/admin"

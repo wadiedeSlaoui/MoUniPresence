@@ -10,6 +10,7 @@ import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
 const StudentList = () => {
+
   const mockStudents = Array.from({ length: 50 }, (_, i) => ({
     id: i + 1,
     code: `ST${String(i + 1).padStart(3, '0')}`,
@@ -18,8 +19,16 @@ const StudentList = () => {
     lastName: ['Doe', 'Smith', 'Ali', 'Johnson', 'Williams', 'Brown'][i % 6],
     picture: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i % 10}.jpg`
   }));
-
-  const [students] = useState(mockStudents);
+  const [students, setStudents] = useState(mockStudents.map(student => ({
+  ...student,
+  present: false // default: absent
+})));
+const toggleAttendance = (id, isPresent) => {
+  const updatedStudents = students.map(student =>
+    student.id === id ? { ...student, present: isPresent } : student
+  );
+  setStudents(updatedStudents);
+};
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [visible, setVisible] = useState(false);
@@ -50,6 +59,14 @@ const StudentList = () => {
       />
     );
   };
+  const handleSubmitAttendance = () => {
+  const presentStudents = students.filter(s => s.present);
+  const absentStudents = students.filter(s => !s.present);
+
+  console.log("Présents:", presentStudents);
+  console.log("Absents:", absentStudents);
+
+};
 
   const footerContent = (
     <div>
@@ -75,20 +92,23 @@ const StudentList = () => {
     </div>
   );
 
-  const leftToolbarTemplate = () => {
-    return (
-      <div className="flex flex-wrap gap-2">
-        <span className="p-input-icon-left">
-          <i className="pi pi-search" />
-          <InputText
-            value={filter}
-            onChange={(e) => setFilter(e.target.value)}
-            placeholder="Search by name"
-          />
-        </span>
-      </div>
-    );
-  };
+const leftToolbarTemplate = () => {
+  return (
+    <div className="flex flex-wrap gap-2 align-items-center">
+      <span className="p-input-icon-left">
+        <i className="pi pi-search" />
+        <InputText
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          placeholder="Search by name"
+        />
+      </span>
+    </div>
+    
+  );
+};
+
+  
 
   return (
     <div className="card p-m-4">
@@ -107,9 +127,19 @@ const StudentList = () => {
           <Column field="firstName" header="First Name" style={{ minWidth: '120px' }}></Column>
           <Column field="lastName" header="Last Name" style={{ minWidth: '120px' }}></Column>
           <Column header="Photo" body={imageBodyTemplate} style={{ minWidth: '80px' }}></Column>
+          <Column
+                header="Présent"
+                body={(rowData) => (
+                    <input
+                    type="checkbox"
+                    checked={rowData.present}
+                    onChange={(e) => toggleAttendance(rowData.id, e.target.checked)}
+                    />
+                )}
+                style={{ textAlign: 'center', width: '100px' }}
+            />
         </DataTable>
       </div>
-
       <Dialog 
         header={`${selectedStudent?.firstName} ${selectedStudent?.lastName}`} 
         visible={visible} 

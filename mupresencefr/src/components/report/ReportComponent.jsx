@@ -9,6 +9,8 @@ class ReportComponent extends Component {
         super(props)
 
         this.state = {
+            Module:{},
+            ModuleOptions:[{ value: "module", label: "Module1" },{ value: "module2", label: "Module2" }],
             cas:{},
             CasOptions:[{ value: "cas", label: "etudiant n'est pas inscris" },{ value: "cas1", label: "Cas de tricherie" }],
             filiere:{},
@@ -27,6 +29,7 @@ class ReportComponent extends Component {
         this._isMounted = true;
         this.state.filiereOptions = [{ value: "filierId", label: "Filier1" },{ value: "filierId2", label: "Filier2" }]
         this.state.CasOptions = [{ value: "cas", label: "etudiant n'est pas inscris" },{ value: "cas1", label: "Cas de tricherie" }]
+        this.state.ModuleOptions = [{ value: "module", label: "Module1" },{ value: "module2", label: "Module2" }]
     }
     //errors for  formation not inputed
     errors = (x) =>{
@@ -72,7 +75,7 @@ class ReportComponent extends Component {
                         <div className = "row">
                             <div className = "card col-md-6 offset-md-3 offset-md-3">
                                 
-                                <h1 style={{textAlign:"center", fontWeight:'bold'}}>Report</h1>
+                                <h1 style={{textAlign:"center", fontWeight:'bold'}}>Rapport</h1>
                                 
                                 <div className = "card-body">
                                     <form>
@@ -97,9 +100,9 @@ class ReportComponent extends Component {
                                         <div className = "form-group">
                                             <label> Module: </label>
                                             <Select 
-                                                value={this.state.module}
+                                                value={this.state.Module}
                                                  onChange={change=>this.changeModuleHandler(change)}
-                                                 options={this.state.filiereOptions}
+                                                 options={this.state.ModuleOptions}
                                                  />
                                                <div className="hidden-error text-danger filiere" style={{display:"none"}}>
                                                     choisir le module.
