@@ -1,0 +1,12 @@
+package ma.fs.uae.ac.mupresence.repository;
+
+import ma.fs.uae.ac.mupresence.model.ModuleEntity;
+import ma.fs.uae.ac.mupresence.model.PresenceEntity;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
+
+import java.util.Optional;
+@Repository
+public interface PresenseRepository extends JpaRepository<PresenceEntity,Integer> {
+    Optional<PresenceEntity> findByModuleEntityAndRoom(ModuleEntity moduleEntity,String room);
+}

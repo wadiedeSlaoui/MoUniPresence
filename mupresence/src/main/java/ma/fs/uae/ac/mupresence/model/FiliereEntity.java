@@ -1,10 +1,9 @@
 package ma.fs.uae.ac.mupresence.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.Data;
+
+import java.util.List;
 
 
 @Entity
@@ -12,9 +11,12 @@ import lombok.Data;
 @Data
 public class FiliereEntity  {
     @Id
+    @Column(name = "id_filiere")
     @GeneratedValue
-    private int idFiliere;
+    private Integer idFiliere;
     private String nom;
+
+
 
 
 

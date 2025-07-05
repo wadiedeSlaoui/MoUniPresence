@@ -1,7 +1,6 @@
 package ma.fs.uae.ac.mupresence.model;
 
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lombok.Data;
@@ -11,11 +10,11 @@ import lombok.Data;
 @Data
 public class StudentEntity  {
     @Id
-    @GeneratedValue
-    private int idEtu;
+    private Integer idEtu;
     private String apogee;
     private String cne;
-    private int idfiliere;
-    private String niveau;
+    private String placeNumber;
+    private String room;
+
 
 }
