@@ -2,7 +2,9 @@ import React, { Component } from 'react'
 //import collaboratorService from '../../servicees/CollaborateurServices';
 import Select from 'react-select';
 import '../report/report.css'
-
+  const [searchTerm, setSearchTerm] = useState('');
+  const [searchField, setSearchField] = useState('room');
+  const [showUnassignedOnly, setShowUnassignedOnly] = useState(false);
   
 class ReportComponent extends Component {
     constructor(props) {

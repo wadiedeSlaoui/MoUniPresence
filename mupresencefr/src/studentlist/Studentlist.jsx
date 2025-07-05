@@ -5,12 +5,16 @@ import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
+import { Dropdown } from 'primereact/dropdown'
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
 
-const StudentList = () => {
-
+  const StudentList = () => {
+  const [showConfirmation, setShowConfirmation] = useState(false);
+  const [selectedRoom, setSelectedRoom] = useState(null);
+  const [selectedFiliere, setSelectedFiliere] = useState(null);
+  const [selectedModule, setSelectedModule] = useState(null);
   const mockStudents = Array.from({ length: 50 }, (_, i) => ({
     id: i + 1,
     code: `ST${String(i + 1).padStart(3, '0')}`,
@@ -33,6 +37,47 @@ const toggleAttendance = (id, isPresent) => {
   const [zoomLevel, setZoomLevel] = useState(1);
   const [visible, setVisible] = useState(false);
   const [filter, setFilter] = useState('');
+
+
+
+  // Sample data for TreeSelect options
+
+
+  const filieres = [
+    {
+      key: 'filieres',
+      label: 'Filières',
+      children: [
+        { key: 'cs', label: 'Computer Science' },
+        { key: 'eng', label: 'Engineering' },
+        { key: 'bus', label: 'Business' }
+      ]
+    }
+  ];
+
+  const modules = [
+    {
+      key: 'modules',
+      label: 'Modules',
+      children: [
+        { key: 'math', label: 'Mathematics' },
+        { key: 'phys', label: 'Physics' },
+        { key: 'prog', label: 'Programming' }
+      ]
+    }
+  ];
+    const rooms = [
+    {
+      key: 'rooms',
+      label: 'Rooms',
+      children: [
+        { key: 'room1', label: 'Room 101' },
+        { key: 'room2', label: 'Room 102' },
+        { key: 'room3', label: 'Room 103' }
+      ]
+    }
+  ];
+
 
   // Filter students based on search input
   const filteredStudents = students.filter(student => 
@@ -59,14 +104,33 @@ const toggleAttendance = (id, isPresent) => {
       />
     );
   };
+
+
   const handleSubmitAttendance = () => {
-  const presentStudents = students.filter(s => s.present);
-  const absentStudents = students.filter(s => !s.present);
-
-  console.log("Présents:", presentStudents);
-  console.log("Absents:", absentStudents);
-
-};
+    const presentStudents = students.filter(s => s.present);
+    const absentStudents = students.filter(s => !s.present);
+    console.log("Présents:", presentStudents);
+    console.log("Absents:", absentStudents);
+    setShowConfirmation(false); // Close dialog after submission
+  };
+  
+  const confirmationDialogFooter = (
+    <div>
+      <Button 
+        label="Non" 
+        icon="pi pi-times" 
+        onClick={() => setShowConfirmation(false)} 
+        className="p-button-text" 
+      />
+      <Button 
+        label="Oui" 
+        icon="pi pi-check" 
+        onClick={handleSubmitAttendance} 
+        className="p-button-success" 
+        autoFocus 
+      />
+    </div>
+  );
 
   const footerContent = (
     <div>
@@ -92,28 +156,147 @@ const toggleAttendance = (id, isPresent) => {
     </div>
   );
 
-const leftToolbarTemplate = () => {
+const startToolbarTemplate = () => {
   return (
-    <div className="flex flex-wrap gap-2 align-items-center">
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        width: '100%',
+        flexWrap: 'wrap',
+        gap: '1rem'
+      }}
+    >
+      {/* Search input */}
+      <span style={{ display: 'flex', alignItems: 'center' }}>
+        <i className="pi pi-search" style={{ marginRight: '0.5rem' }} />
+        <InputText
+          value={filter}
+          onChange={(e) => setFilter(e.target.value)}
+          placeholder="Search by name"
+          style={{ padding: '0.5rem', borderRadius: '6px' }}
+        />
+      </span>
+      <Button
+        label="Enregistrer la présence"
+        icon="pi pi-check"
+        onClick={handleSubmitAttendance}
+        style={{
+          backgroundColor: '#074590',
+          borderColor: '#074590',
+          color: 'white',
+          fontWeight: 'bold',
+          padding: '0.6rem 1rem',
+          borderRadius: '6px'
+        }}
+      />
+    </div>
+  );
+};
+
+const leftToolbarTemplate = () => {
+  // Sample options for dropdowns
+  const roomOptions = [
+    { label: 'Room 101', value: 'room1' },
+    { label: 'Room 102', value: 'room2' },
+    { label: 'Room 103', value: 'room3' }
+  ];
+
+  const filiereOptions = [
+    { label: 'Computer Science', value: 'cs' },
+    { label: 'Engineering', value: 'eng' },
+    { label: 'Business', value: 'bus' }
+  ];
+
+  const moduleOptions = [
+    { label: 'Mathematics', value: 'math' },
+    { label: 'Physics', value: 'phys' },
+    { label: 'Programming', value: 'prog' }
+  ];
+
+  return (
+    <div className="flex align-items-center gap-3" style={{ flexWrap: 'wrap' }}>
+      {/* Search Input */}
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
         <InputText
           value={filter}
           onChange={(e) => setFilter(e.target.value)}
           placeholder="Search by name"
+          style={{ width: '200px' }}
         />
       </span>
+
+      {/* Room Dropdown */}
+      <Dropdown
+        value={selectedRoom}
+        options={roomOptions}
+        onChange={(e) => setSelectedRoom(e.value)}
+        placeholder="Select Room"
+        className="w-full md:w-14rem"
+      />
+
+      {/* Filière Dropdown */}
+      <Dropdown
+        value={selectedFiliere}
+        options={filiereOptions}
+        onChange={(e) => setSelectedFiliere(e.value)}
+        placeholder="Select Filière"
+        className="w-full md:w-14rem"
+      />
+
+      {/* Module Dropdown */}
+      <Dropdown
+        value={selectedModule}
+        options={moduleOptions}
+        onChange={(e) => setSelectedModule(e.value)}
+        placeholder="Select Module"
+        className="w-full md:w-14rem"
+      />
     </div>
-    
   );
 };
 
-  
+  // Keep your existing rightToolbarTemplate
+  const rightToolbarTemplate = () => (
+    <Button
+      label="Enregistrer la présence"
+      icon="pi pi-check"
+      className="p-button-success"
+      onClick={() => setShowConfirmation(true)}
+      style={{
+        backgroundColor: "#074590",
+        borderColor: "#074590",
+        color: "white"
+      }}
+    />
+  );
 
   return (
     <div className="card p-m-4">
-      <Toolbar className="mb-4" left={leftToolbarTemplate} />
+      <Toolbar
+        left={leftToolbarTemplate}
+        right={rightToolbarTemplate}
+        style={{ width: '100%', padding: '1rem', gap: '1rem' }}
+      />
+      
+              <Dialog 
+        visible={showConfirmation} 
+        onHide={() => setShowConfirmation(false)}
+        header="Confirmation"
+        footer={confirmationDialogFooter}
+        style={{ width: '350px' }}
+        modal
+      >
+        <div className="flex align-items-center">
+          <i className="pi pi-exclamation-triangle mr-3" style={{ fontSize: '2rem' }} />
+          <span>Êtes-vous sûr de vouloir enregistrer la présence ?</span>
+        </div>
+      </Dialog>
 
+
+        
       <div style={{ maxHeight: '100vh', overflow: 'auto' }}>
         <DataTable 
           value={filteredStudents}

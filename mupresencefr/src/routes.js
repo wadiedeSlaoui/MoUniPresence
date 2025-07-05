@@ -28,6 +28,7 @@ import StudentList from "studentlist/Studentlist";
 import listeUser from "listeUser/listeUser"
 import ListExam from "ListExam/ListExam"; 
 import ReportList from "ReportList/ReportList";
+import Listepresence from "LesListesdePresences/Listespresence";
 
 const dashboardRoutes = [
 
@@ -80,6 +81,13 @@ const dashboardRoutes = [
     component: ReportList,
     layout: "/admin"
   },
+  {
+    path: "/Listepresence",
+    name: "liste de présences",
+    icon: "nc-icon nc-align-left-2",
+    component: Listepresence,
+    layout: "/admin"
+  },  
 /*  {
     path: "/typography",
     name: "Typography",
