@@ -102,4 +102,9 @@ public class UserServiceImpl implements UserService {
         return userMapper.userToUserDTO(updated);
     }
 
+    @Override
+    public List<UserDTO> getSurveillat() {
+        return userMapper.listUserEntityToUserDTO(userRepository.findAllSurveillant());
+    }
+
 }

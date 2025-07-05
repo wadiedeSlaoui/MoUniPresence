@@ -17,4 +17,5 @@ public interface UserService {
     void deleteUser(String username);
     UserDTO updateUser(String username, UserDTO userDTO);
 
+    List<UserDTO> getSurveillat();
 }

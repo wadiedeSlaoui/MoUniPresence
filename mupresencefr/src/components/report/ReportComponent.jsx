@@ -2,6 +2,8 @@ import React, { Component } from 'react'
 //import collaboratorService from '../../servicees/CollaborateurServices';
 import Select from 'react-select';
 import '../report/report.css'
+import FiliereAndModuleServices from 'services/FiliereAndModuleServices';
+import RapportService from 'services/RapportService';
 
   
 class ReportComponent extends Component {
@@ -9,17 +11,23 @@ class ReportComponent extends Component {
         super(props)
 
         this.state = {
-            Module:{},
-            ModuleOptions:[{ value: "module", label: "Module1" },{ value: "module2", label: "Module2" }],
-            cas:{},
+            Module:'',
+            ModuleOptions:[],
+            cas:'',
             CasOptions:[{ value: "cas", label: "etudiant n'est pas inscris" },{ value: "cas1", label: "Cas de tricherie" }],
-            filiere:{},
-            filiereOptions:[{ value: "filierId", label: "Filier1" },{ value: "filierId2", label: "Filier2" }] ,
-            raison:""      
+            filiere:'',
+            filiereOptions:[] ,
+            description:"",
+            nuApogee:"",
+            student:""      
         }
         
         this.changeFiliereHandler =this.changeFiliereHandler.bind(this);
-        this.changeRaisonHandler =this.changeRaisonHandler.bind(this);
+        this.changeModuleHandler =this.changeModuleHandler.bind(this);
+        this.changeLeCasHandler = this.changeLeCasHandler.bind(this);
+        this.changeStudentHandler =this.changeStudentHandler.bind(this);
+        this.changeNuApogeeHandler =this.changeNuApogeeHandler.bind(this);
+        this.changeDescriptionHandler =this.changeDescriptionHandler.bind(this);
         this.saveOrUpdateReport = this.saveOrUpdateReport.bind(this);
 
     }
@@ -27,9 +35,17 @@ class ReportComponent extends Component {
     // get collaborator formation if user click in update
     componentDidMount(){
         this._isMounted = true;
-        this.state.filiereOptions = [{ value: "filierId", label: "Filier1" },{ value: "filierId2", label: "Filier2" }]
+        FiliereAndModuleServices.getAllFiliers().then(res=>{
+             const options = res.data.map(op => ({ label: op, value: op }));
+             this.setState({filiereOptions: options });
+            },
+            err=>{
+                alert("error in getting filieres")
+
+            }
+        );
+       
         this.state.CasOptions = [{ value: "cas", label: "etudiant n'est pas inscris" },{ value: "cas1", label: "Cas de tricherie" }]
-        this.state.ModuleOptions = [{ value: "module", label: "Module1" },{ value: "module2", label: "Module2" }]
     }
     //errors for  formation not inputed
     errors = (x) =>{
@@ -46,9 +62,19 @@ class ReportComponent extends Component {
         if(this.state.filiere.value == undefined ){
            this.errors('filiere')
         }
-         if   (this.state.raison === "" ){
-           this.errors('raison')
+        
+        let rappot = {
+            surveillant: sessionStorage.getItem("fullName"),
+            filiere: this.state.filiere.value,
+            module: this.state.Module.value,
+            leCas: this.state.cas.value,
+            studentFullName:this.state.student,
+            nuApogee : this.state.nuApogee,
+            description : this.state.description
         }
+        RapportService.add(rappot).then(res=>{
+            this.props.history.push('/surv/dashboard');
+        },err=>{alert("error in creating rapport")});
          
     }
         
@@ -57,13 +83,38 @@ class ReportComponent extends Component {
     
     changeFiliereHandler= (event) => {
         this.setState({filiere: event});
+         FiliereAndModuleServices.getAllModules(event.value).then(res=>{
+             const options = res.data.map(op => ({ label: op, value: op }));
+             this.setState({ModuleOptions: options });
+            },
+            err=>{
+                alert("error in getting Modules")
+            }
+        );
     }
-    changeRaisonHandler= (event) => {
-        this.setState({raison: event.target.value});
+    changeModuleHandler= (event) => {
+        this.setState({Module: event});
     }
-    
+    changeLeCasHandler= (event) => {
+        this.setState({cas: event});
+    }
+   
+    changeNuApogeeHandler= (event) => {
+        this.setState({nuApogee: event.target.value});
+        
+    }
+    changeDescriptionHandler= (event) => {
+        this.setState({description: event.target.value});
+        
+    }
+    changeStudentHandler= (event) => {
+        this.setState({student: event.target.value});
+        
+    }
+
     cancel(){
-        this.props.history.push('/admin');
+        this.props.history.push('/surv/dashboard');
+
     }
     render() {
       
@@ -112,7 +163,7 @@ class ReportComponent extends Component {
                                             <label> Le cas  </label>
                                             <Select 
                                                 value={this.state.cas}
-                                                 onChange={change=>this.changeModuleHandler(change)}
+                                                 onChange={change=>this.changeLeCasHandler(change)}
                                                  options={this.state.CasOptions}
                                                  />
                                                <div className="hidden-error text-danger filiere" style={{display:"none"}}>
@@ -121,15 +172,19 @@ class ReportComponent extends Component {
                                         </div>
                                         <div className = "form-group">
                                             <label> nom et prénom </label>
-                                            <input placeholder="Full Name" name="nom et prénom" className="form-control" type='text'/>
+                                            <input placeholder="Full Name" name="nom et prénom" 
+                                            className="form-control" type='text'
+                                            onChange={this.changeStudentHandler}
+                                            value={this.state.student}
+                                            />
                                         </div>
                                         <div className = "form-group">
                                             <label> N° Apogee </label>
-                                            <input placeholder="Entrer l'apogee" name="N° Apogee" className="form-control" type='text'/>
+                                            <input onChange={this.changeNuApogeeHandler} value={this.state.nuApogee} placeholder="Entrer l'apogee" name="N° Apogee" className="form-control" type='text'/>
                                         </div>          
                                        <div className = "form-group">
                                             <label>Description</label>
-                                            <textarea class="form-control" placeholder="Entrer la raison" onChange={this.changepasswordHandler} style={{height: "100px"}}></textarea>
+                                            <textarea class="form-control" value={this.state.description} onChange={this.changeDescriptionHandler} placeholder="Entrer la description"  style={{height: "100px"}}></textarea>
                                             <div className="hidden-error text-danger raison" style={{display:"none"}}>
                                                     saisir le texte.
                                                 </div>

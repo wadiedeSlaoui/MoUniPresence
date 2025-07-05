@@ -42,7 +42,7 @@ import Loading from '../Loading';
 
             AuthService.user(this.state.username).then(res => {
                 sessionStorage.setItem('user', res.data.matricule);
-                sessionStorage.setItem('fullName', res.data.fullName);
+                sessionStorage.setItem('fullName', res.data.firstName + " " + res.data.lastName);
 
                 // ✅ stop loading
                 this.setState({ loading: false });

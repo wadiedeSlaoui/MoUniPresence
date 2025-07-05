@@ -8,6 +8,8 @@ import 'ListExam/ListExam.css'
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import UserService from 'services/UserService';
+import presenceService from 'services/presenceService';
 
 const ListExam = () => {
   const [exams, setExams] = useState([]);
@@ -16,47 +18,64 @@ const ListExam = () => {
   const [searchField, setSearchField] = useState('room');
   const [showUnassignedOnly, setShowUnassignedOnly] = useState(false);
 
+  // Mock data on component mount
   useEffect(() => {
-    const mockExams = [
-      { id: 1, room: 'Salle A', module: 'Mathématiques', filiere: 'Informatique', surveillant: '' },
-      { id: 2, room: 'Salle B', module: 'Physique', filiere: 'Génie Civil', surveillant: 'ahmed' },
-      { id: 3, room: 'Salle C', module: 'Programmation', filiere: 'Informatique', surveillant: '' }
-    ];
+    // Simulated list of exams
 
-    const mockSurveillants = [
-      { label: 'Ahmed Fassi', value: 'ahmed' },
-      { label: 'Zineb Ouardi', value: 'zineb' },
-      { label: 'Tariq Naji', value: 'tariq' }
-    ];
+    presenceService.presenceList().then(res=>{
 
-    setExams(mockExams);
-    setSurveillants(mockSurveillants);
+      setExams(res.data);
+
+    },err=>{
+      alert("error in getting surveillance")
+    });
+
+    UserService.getSurveillant().then(res=>{
+
+      setSurveillants(res.data.map(surv => {return {label: surv.firstName + " " + surv.lastName, value: surv.username}}));
+
+    },err=>{
+      alert("error in getting surveillance")
+    });
+
   }, []);
 
   const onSurveillantChange = (rowData, value) => {
-    const updated = exams.map(exam =>
-      exam.id === rowData.id ? { ...exam, surveillant: value } : exam
-    );
-    setExams(updated);
-  };
+    const updatedRow = { ...rowData, survaillant: value };
 
-  const surveillantTemplate = (rowData) => (
-    <Dropdown
-      value={rowData.surveillant}
-      options={surveillants}
-      onChange={(e) => onSurveillantChange(rowData, e.value)}
-      placeholder="Choisir"
-      className="w-full"
-      filter
-      showClear
-      optionLabel="label"
-    />
-  );
+  presenceService.updateSurv(updatedRow).then(res => {
+    setExams(prevExams =>
+      prevExams.map(exam =>
+        exam.room === updatedRow.room && exam.filiere === updatedRow.filiere && exam.module === updatedRow.module ? updatedRow : exam
+      )
+    );
+  }, err => {
+    alert("error in UPDATE surveillance");
+  });
+
+  };
+const surveillantTemplate = (rowData) => (
+  <Dropdown
+    value={rowData.survaillant}
+    options={surveillants}
+    onChange={(e) => {
+      onSurveillantChange(rowData, e.value)
+    }
+    }
+    placeholder="Choisir"
+    className="w-full"
+    filter 
+    showClear 
+    optionLabel="label" 
+  />
+);
+
+
 
   const filteredExams = exams.filter((exam) => {
     const fieldValue = exam[searchField]?.toLowerCase() || '';
     const matchesSearch = fieldValue.includes(searchTerm.toLowerCase());
-    const matchesUnassigned = showUnassignedOnly ? exam.surveillant === '' : true;
+    const matchesUnassigned = showUnassignedOnly ? exam.survaillant === '' || exam.survaillant == undefined || exam.survaillant == null : true;
 
     return matchesSearch && matchesUnassigned;
   });
@@ -104,9 +123,9 @@ const ListExam = () => {
       </div>
 
       <DataTable value={filteredExams} emptyMessage="Aucun examen trouvé">
-        <Column field="room" header="Salle" style={{ minWidth: '120px' }} />
-        <Column field="module" header="Module" style={{ minWidth: '150px' }} />
         <Column field="filiere" header="Filière" style={{ minWidth: '150px' }} />
+        <Column field="module" header="Module" style={{ minWidth: '150px' }} />
+        <Column field="room" header="Salle" style={{ minWidth: '120px' }} />
         <Column header="Surveillant" body={surveillantTemplate} style={{ minWidth: '180px' }} />
       </DataTable>
     </div>
