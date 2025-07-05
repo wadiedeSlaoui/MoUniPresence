@@ -5,7 +5,7 @@ import '../report/report.css'
 import FiliereAndModuleServices from 'services/FiliereAndModuleServices';
 import RapportService from 'services/RapportService';
 
-  
+
 class ReportComponent extends Component {
     constructor(props) {
         super(props)
