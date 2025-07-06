@@ -43,7 +43,11 @@ public class PresenceServiceImpl implements PresenceService {
                     presenseDTO.setRoom(room);
                     presenseDTO.setModule(moduleEntity.getNom());
                     Optional<PresenceEntity> presenceEntity = presenseRepository.findByModuleEntityAndRoom(moduleEntity, room);
-                    presenceEntity.ifPresent(entity -> presenseDTO.setSurvaillant(entity.getSurv().getUsername()));
+                    presenceEntity.ifPresent(entity -> {
+                        presenseDTO.setSurvaillant(entity.getSurv().getUsername());
+                        presenseDTO.setSubmitted(entity.isSubmited());
+                    });
+
                     presenseDTOList.add(presenseDTO);
                 }
             }
@@ -122,12 +126,12 @@ public class PresenceServiceImpl implements PresenceService {
     }
 
     @Override
-    public List<StudentExamDTO> studentListByUserAndFiliereAndModuleAndRoom(String username, String filiere, String module, String room) {
+    public List<StudentExamDTO> studentListByUserAndFiliereAndModuleAndRoom(String username, String filiere, String module, String room,boolean submitted) {
         Optional<UserEntity> userEntity = userRepository.findByUsername(username);
         ModuleEntity moduleEn = moduleRepository.findByFiliereEntityAndNom(filiereRepository.findByNom(filiere).orElse(null),module);
         List<StudentExamDTO> studentExamDTOS = new ArrayList<>();
         if(userEntity.isPresent()){
-            PresenceEntity presenceEntities = presenseRepository.findBySurvAndModuleEntityAndRoomAndSubmited(userEntity.get(),moduleEn,room,false);
+            PresenceEntity presenceEntities = presenseRepository.findBySurvAndModuleEntityAndRoomAndSubmited(userEntity.get(),moduleEn,room,submitted);
             for(ExamEntity exam :presenceEntities.getExams()){
                 StudentExamDTO studentExamDTO = new StudentExamDTO();
                 studentExamDTO.setStudent_code(exam.getStudentEntity().getIdEtu());
@@ -135,6 +139,7 @@ public class PresenceServiceImpl implements PresenceService {
                 studentExamDTO.setLastName(exam.getStudentEntity().getLastName());
                 studentExamDTO.setPlaceNumber(exam.getStudentEntity().getPlaceNumber());
                 studentExamDTO.setCne(exam.getStudentEntity().getCne());
+                studentExamDTO.setPresent(exam.isPresent());
                 studentExamDTOS.add(studentExamDTO);
             }
         }

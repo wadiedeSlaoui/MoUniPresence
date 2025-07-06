@@ -49,7 +49,16 @@ public class PresenseController {
             @RequestParam String username,
             @RequestParam String room
             ) {
-        return ResponseEntity.ok(presenceService.studentListByUserAndFiliereAndModuleAndRoom(username, filiere, module,room));
+        return ResponseEntity.ok(presenceService.studentListByUserAndFiliereAndModuleAndRoom(username, filiere, module,room,false));
+    }
+    @GetMapping("/studentsSubmited")
+    public ResponseEntity<List<StudentExamDTO>> studentListSubmeted(
+            @RequestParam String module,
+            @RequestParam String filiere,
+            @RequestParam String username,
+            @RequestParam String room
+    ) {
+        return ResponseEntity.ok(presenceService.studentListByUserAndFiliereAndModuleAndRoom(username, filiere, module,room,true));
     }
     @PostMapping("/studentsPresence")
     public void studentList(

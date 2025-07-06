@@ -59,23 +59,35 @@ const ListExam = () => {
   });
 
   };
-const surveillantTemplate = (rowData) => (
-  <Dropdown
-    value={rowData.survaillant}
-    options={surveillants}
-    onChange={(e) => {
-      onSurveillantChange(rowData, e.value)
-    }
-    }
-    placeholder="Choisir"
-    className="w-full"
-    filter 
-    showClear 
-    optionLabel="label" 
-  />
-);
+const surveillantTemplate = (rowData) => {
+   if (rowData.submitted) {
+    // Find the label from the surveillants list
+    const selected = surveillants.find(s => s.value === rowData.survaillant);
+    return <span>{selected?.label || '-'}</span>;
+  }
+
+  return (
+    <Dropdown
+      value={rowData.survaillant}
+      options={surveillants}
+      onChange={(e) => onSurveillantChange(rowData, e.value)}
+      placeholder="Choisir"
+      className="w-full"
+      filter
+      showClear
+      optionLabel="label"
+    />
+  );
+};
  const handleRowClick = (event) => {
+
     setSelectedSession(event.data);
+    presenceService.listOfStudentByFilierAndModuleAndRoomSubmitted(event.data.module,event.data.filiere,event.data.room,event.data.survaillant).then(res=>{
+        setStudentsList(res.data);
+    },
+  err=>{
+    alert("error when download list of students")
+  })
     setDialogVisible(true);
   };
 
@@ -164,8 +176,9 @@ const surveillantTemplate = (rowData) => (
                   </div>
                   
                   <DataTable value={studentsList}>
-                    <Column field="name" header="Nom" />
-                    <Column field="apogee" header="Apogée" />
+                    <Column field="lastName" header="Nom" />
+                    <Column field="firstName" header="Prenom" />
+                    <Column field="student_code" header="Apogée" />
                     <Column
                       header="Statut"
                       body={(rowData) => (

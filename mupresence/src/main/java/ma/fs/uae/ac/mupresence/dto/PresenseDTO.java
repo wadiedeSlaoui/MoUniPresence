@@ -9,4 +9,5 @@ public class PresenseDTO {
     private String survaillant;
     private String module;
     private String room;
+    private boolean submitted;
 }
