@@ -64,26 +64,7 @@ React.useEffect(() => {
         />
       </span>
 
-      <div className="flex gap-1 ml-4">
-        <Button
-          label="All"
-          className={filterType === 'all' ? 'p-button-primary' : 'p-button-text'}
-          onClick={() => setFilterType('all')}
-          style={{ backgroundColor: '#074590', borderColor: '#074590', color: 'white' }} 
-        />
-        <Button
-          label="Admins"
-          className={filterType === 'admin' ? 'p-button-primary' : 'p-button-text'}
-          onClick={() => setFilterType('admin')}
-          style={{ backgroundColor: '#074590', borderColor: '#074590', color: 'white' }} 
-        />
-        <Button
-          label="Users"
-          className={filterType === 'user' ? 'aoa p-button-primary' : 'p-button-text' } 
-          onClick={() => setFilterType('user')}
-          style={{ backgroundColor: '#074590', borderColor: '#074590', color: 'white' }} 
-        />
-      </div>
+ 
     </div>
   );
 
@@ -152,8 +133,8 @@ const handleSave = () => {
 
       <DataTable value={filteredUsers} emptyMessage="No users found">
         <Column field="role" header="Type" style={{ minWidth: '100px' }} />
-        <Column field="firstName" header="First Name" style={{ minWidth: '120px' }} />
-        <Column field="lastName" header="Last Name" style={{ minWidth: '120px' }} />
+        <Column field="firstName" header="Prénom" style={{ minWidth: '120px' }} />
+        <Column field="lastName" header="Nom" style={{ minWidth: '120px' }} />
         <Column field="username" header="Username" style={{ minWidth: '120px' }} />
         <Column field="mail" header="Email" style={{ minWidth: '200px' }} />
         <Column header="Actions" body={actionTemplate} style={{ minWidth: '150px' }} />

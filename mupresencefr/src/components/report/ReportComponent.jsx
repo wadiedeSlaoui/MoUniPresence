@@ -73,7 +73,7 @@ class ReportComponent extends Component {
             description : this.state.description
         }
         RapportService.add(rappot).then(res=>{
-            this.props.history.push('/surv/dashboard');
+            this.props.history.push('/surv/studentlist');
         },err=>{alert("error in creating rapport")});
          
     }
@@ -113,7 +113,7 @@ class ReportComponent extends Component {
     }
 
     cancel(){
-        this.props.history.push('/surv/dashboard');
+        this.props.history.push('/surv/studentlist');
 
     }
     render() {

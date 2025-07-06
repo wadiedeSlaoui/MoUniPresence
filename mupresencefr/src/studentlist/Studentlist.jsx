@@ -18,6 +18,10 @@ import presenceService from 'services/presenceService';
   const [selectedFiliere, setSelectedFiliere] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
   const [students, setStudents] = useState([]);
+  useEffect(() => {
+  console.log("👥 Students loaded:", students);
+}, [students]);
+
  
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
@@ -40,21 +44,18 @@ import presenceService from 'services/presenceService';
 
   // Sample data for TreeSelect options
 
+const [filteredStudents, setFilteredStudents] = useState([]);
 
- const toggleAttendance = (id, isPresent) => {
-  const updatedStudents = students.map(student =>
-    student.id === id
-      ? { ...student, present: isPresent }
-      : { ...student } 
+const toggleAttendance = (student_code, checked) => {
+  setFilteredStudents(prevStudents =>
+    prevStudents.map(student =>
+      student.student_code === student_code
+        ? { ...student, present: checked }
+        : student
+    )
   );
-  setStudents(updatedStudents);
 };
 
-  // Filter students based on search input
-  const filteredStudents = students.filter(student => 
-    student.firstName.toLowerCase().includes(filter.toLowerCase()) ||
-    student.lastName.toLowerCase().includes(filter.toLowerCase())
-  );
 
   const imageBodyTemplate = (rowData) => {
     return (
@@ -78,10 +79,12 @@ import presenceService from 'services/presenceService';
 
 
   const handleSubmitAttendance = () => {
-    presenceService.submitStudentPresenceListByFilierAndModuleAndRoom(selectedModule,selectedFiliere,selectedRoom,students).then(res=>{
+    presenceService.submitStudentPresenceListByFilierAndModuleAndRoom(selectedModule,selectedFiliere,selectedRoom,filteredStudents).then(res=>{
       setSelectedRoom(null);
       setSelectedModule(null);
+      setSelectedFiliere(null);
       setStudents([]);
+      setFilteredStudents([]);
       presenceService.listOfFiliere().then(res=>{
       const options = res.data.map(op => ({ label: op, value: op }));
           setShowConfirmation(false);
@@ -175,10 +178,16 @@ const leftToolbarTemplate = () => {
         ...student, // ✅ clone safely
         picture: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i % 10}.jpg`,
         present: false, // ensure default boolean
-        id : i
+        
       }));
       setStudents(st);
-    },
+      //   // Filter students based on search input
+      const studentFF = st.filter(student => 
+        student.firstName.toLowerCase().includes(filter.toLowerCase()) ||
+        student.lastName.toLowerCase().includes(filter.toLowerCase())
+        );
+        setFilteredStudents(studentFF);
+        },
   err=>{
     alert("error when showing student list");
   })
@@ -267,9 +276,7 @@ const leftToolbarTemplate = () => {
       <div style={{ maxHeight: '100vh', overflow: 'auto' }}>
         <DataTable 
           value={filteredStudents}
-          rowKey="id"
-          //scrollable 
-          //scrollHeight="flex"
+          rowKey="student_code"
           emptyMessage="No students found"
         >
           <Column field="student_code" header="Student Code" style={{ minWidth: '120px' }}></Column>
@@ -281,8 +288,8 @@ const leftToolbarTemplate = () => {
                 header="Présent"
                 body={(rowData) => (
                     <Checkbox
-                    checked={!!rowData.present}
-                    onChange={(e) => toggleAttendance(rowData.id, e.checked)}
+                     checked={!!rowData.present}
+                     onChange={(e) => toggleAttendance(rowData.student_code, e.checked)}
                     />
                 )}
                 style={{ textAlign: 'center', width: '100px' }}

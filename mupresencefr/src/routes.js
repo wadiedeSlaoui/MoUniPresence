@@ -28,14 +28,14 @@ import StudentList from "studentlist/Studentlist";
 import listeUser from "listeUser/listeUser"
 import ListExam from "ListExam/ListExam"; 
 import ReportList from "ReportList/ReportList";
-import Listepresence from "LesListesdePresences/Listespresence";
+
 
 const dashboardRoutes = [
 
   {
     path: "/dashboard",
-    name: "Dashboard",
-    icon: "nc-icon nc-chart-pie-35",
+    name: "Importer la liste",
+    icon: "nc-icon nc-cloud-download-93",
     component: Dashboard,
     layout: "/admin"
   },
@@ -46,20 +46,8 @@ const dashboardRoutes = [
     component: UserProfile,
     layout: "/admin"
   },
- {
-    path: "/report",
-    name: "Créer un rapport",
-    icon: "nc-icon nc-paper-2",
-    component: ReportComponent,
-    layout: "/admin"
-  },
-  {
-      path: "/studentlist",
-    name: "Liste des étudiants",
-    icon: "nc-icon nc-notes",
-    component: StudentList,
-    layout: "/admin"
-  },
+ 
+
  {
     path: "/listeUser",
     name: "liste des utilisateurs",
@@ -81,13 +69,7 @@ const dashboardRoutes = [
     component: ReportList,
     layout: "/admin"
   },
-  {
-    path: "/Listepresence",
-    name: "liste de présences",
-    icon: "nc-icon nc-align-left-2",
-    component: Listepresence,
-    layout: "/admin"
-  },  
+ 
 /*  {
     path: "/typography",
     name: "Typography",
