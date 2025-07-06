@@ -26,6 +26,8 @@ public class PresenceEntity {
     @JoinColumn(name="id", nullable=false)
     private UserEntity surv;
 
+    private boolean submited = false ;
+
 
 
     // Getters and setters

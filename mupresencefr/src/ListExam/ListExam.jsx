@@ -4,6 +4,8 @@ import { Column } from 'primereact/column';
 import { Dropdown } from 'primereact/dropdown';
 import { InputText } from 'primereact/inputtext';
 import { Checkbox } from 'primereact/checkbox';
+import { Dialog } from 'primereact/dialog';
+import { Button } from 'primereact/button';
 import 'ListExam/ListExam.css'
 import 'primereact/resources/themes/lara-light-blue/theme.css';
 import 'primereact/resources/primereact.min.css';
@@ -13,10 +15,13 @@ import presenceService from 'services/presenceService';
 
 const ListExam = () => {
   const [exams, setExams] = useState([]);
+  const [studentsList, setStudentsList] = useState([]);
   const [surveillants, setSurveillants] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [searchField, setSearchField] = useState('room');
   const [showUnassignedOnly, setShowUnassignedOnly] = useState(false);
+  const [selectedSession, setSelectedSession] = useState(null);
+   const [dialogVisible, setDialogVisible] = useState(false);
 
   // Mock data on component mount
   useEffect(() => {
@@ -69,7 +74,10 @@ const surveillantTemplate = (rowData) => (
     optionLabel="label" 
   />
 );
-
+ const handleRowClick = (event) => {
+    setSelectedSession(event.data);
+    setDialogVisible(true);
+  };
 
 
   const filteredExams = exams.filter((exam) => {
@@ -122,14 +130,55 @@ const surveillantTemplate = (rowData) => (
         </div>
       </div>
 
-      <DataTable value={filteredExams} emptyMessage="Aucun examen trouvé">
+      <DataTable 
+        value={filteredExams} 
+        emptyMessage="Aucun examen trouvé"  
+        onRowClick={handleRowClick}
+        selectionMode="single"
+        rowHover
+      >
         <Column field="filiere" header="Filière" style={{ minWidth: '150px' }} />
         <Column field="module" header="Module" style={{ minWidth: '150px' }} />
         <Column field="room" header="Salle" style={{ minWidth: '120px' }} />
         <Column header="Surveillant" body={surveillantTemplate} style={{ minWidth: '180px' }} />
       </DataTable>
+      <Dialog
+            header={`Détails - ${selectedSession?.module || ''}`}
+            visible={dialogVisible}
+            style={{ width: '50vw' }}
+            onHide={() => setDialogVisible(false)}
+            footer={
+              <Button
+                label="Fermer"
+                icon="pi pi-times"
+                onClick={() => setDialogVisible(false)}
+                className="p-button-text"
+              />
+            }
+        > 
+          {selectedSession && (
+                <div>
+                  <div className="mb-4">
+                    <h4>Surveillant: {surveillants.filter(suv=> suv.value == selectedSession.survaillant).map(res=> res.label)[0] || 'Non assigné'}</h4>
+                    <p>Filière: {selectedSession.filiere} | Lieu: {selectedSession.room}</p>
+                  </div>
+                  
+                  <DataTable value={studentsList}>
+                    <Column field="name" header="Nom" />
+                    <Column field="apogee" header="Apogée" />
+                    <Column
+                      header="Statut"
+                      body={(rowData) => (
+                        <i className={`pi ${rowData.present ? 'pi-check-circle text-green-500' : 'pi-times-circle text-red-500'}`} />
+                      )}
+                    />
+                  </DataTable>
+                </div>
+              )}
+      </Dialog>
     </div>
   );
 };
 
 export default ListExam;
+ 
