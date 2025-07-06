@@ -11,6 +11,8 @@ import lombok.Data;
 public class StudentEntity  {
     @Id
     private Integer idEtu;
+    private String firstname;
+    private String lastName;
     private String apogee;
     private String cne;
     private String placeNumber;

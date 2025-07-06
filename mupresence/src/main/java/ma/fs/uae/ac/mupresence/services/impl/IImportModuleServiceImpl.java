@@ -64,10 +64,18 @@ public class IImportModuleServiceImpl implements ImportModuleService {
                     studentEntity.setCne(studentDTO.getMassarCode());
                     studentEntity.setPlaceNumber(studentDTO.getPlaceNumber());
                     studentEntity.setRoom(studentDTO.getRoom());
+                    studentEntity.setFirstname(studentDTO.getFirstName());
+                    studentEntity.setLastName(studentDTO.getLastName());
                     studentEntity = studentRepository.save(studentEntity);
 
                 } else {
                     studentEntity = studentEntityOp.get();
+                    studentEntity.setCne(studentDTO.getMassarCode());
+                    studentEntity.setPlaceNumber(studentDTO.getPlaceNumber());
+                    studentEntity.setRoom(studentDTO.getRoom());
+                    studentEntity.setFirstname(studentDTO.getFirstName());
+                    studentEntity.setLastName(studentDTO.getLastName());
+                    studentEntity = studentRepository.save(studentEntity);
                 }
                 Optional<ExamEntity> examEntityOpt = examRepository.findByStudentEntityAndModuleEntityAndYearAndSession(studentEntity, moduleEntity, importedDataDTO.getYear(), importedDataDTO.getSession());
                 if (examEntityOpt.isEmpty()) {

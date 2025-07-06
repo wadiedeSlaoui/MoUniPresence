@@ -3,8 +3,6 @@ package ma.fs.uae.ac.mupresence.model;
 import jakarta.persistence.*;
 import lombok.Data;
 
-import java.util.List;
-
 
 @Entity
 @Table(name = "Examen")

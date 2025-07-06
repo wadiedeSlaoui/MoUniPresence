@@ -1,83 +1,54 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { DataTable } from 'primereact/datatable';
 import { Column } from 'primereact/column';
 import { Dialog } from 'primereact/dialog';
 import { Button } from 'primereact/button';
 import { InputText } from 'primereact/inputtext';
 import { Toolbar } from 'primereact/toolbar';
+import { Checkbox } from 'primereact/checkbox';
 import { Dropdown } from 'primereact/dropdown'
 import 'primereact/resources/themes/lara-light-indigo/theme.css';
 import 'primereact/resources/primereact.min.css';
 import 'primeicons/primeicons.css';
+import presenceService from 'services/presenceService';
 
   const StudentList = () => {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [selectedRoom, setSelectedRoom] = useState(null);
   const [selectedFiliere, setSelectedFiliere] = useState(null);
   const [selectedModule, setSelectedModule] = useState(null);
-  const mockStudents = Array.from({ length: 50 }, (_, i) => ({
-    id: i + 1,
-    code: `ST${String(i + 1).padStart(3, '0')}`,
-    cne: `CNE${String(i + 1000).padStart(6, '0')}`,
-    firstName: ['John', 'Jane', 'Mohamed', 'Anna', 'David', 'Sarah'][i % 6],
-    lastName: ['Doe', 'Smith', 'Ali', 'Johnson', 'Williams', 'Brown'][i % 6],
-    picture: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i % 10}.jpg`
-  }));
-  const [students, setStudents] = useState(mockStudents.map(student => ({
-  ...student,
-  present: false // default: absent
-})));
-const toggleAttendance = (id, isPresent) => {
-  const updatedStudents = students.map(student =>
-    student.id === id ? { ...student, present: isPresent } : student
-  );
-  setStudents(updatedStudents);
-};
+  const [students, setStudents] = useState([]);
+ 
   const [selectedStudent, setSelectedStudent] = useState(null);
   const [zoomLevel, setZoomLevel] = useState(1);
   const [visible, setVisible] = useState(false);
   const [filter, setFilter] = useState('');
 
-
+  const [filiereOptions, setfiliereOptions] = useState([]);
+  const [moduleOptions, setmoduleOptions] = useState([]);
+  const [roomOptions, setroomOptions] = useState([]);
+//picture: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i % 10}.jpg`
+  useEffect(() => {
+  presenceService.listOfFiliere().then(res=>{
+     const options = res.data.map(op => ({ label: op, value: op }));
+        setfiliereOptions(options);
+      },
+      err=>{
+          alert("error in getting filieres")
+  });
+  }, [])
 
   // Sample data for TreeSelect options
 
 
-  const filieres = [
-    {
-      key: 'filieres',
-      label: 'Filières',
-      children: [
-        { key: 'cs', label: 'Computer Science' },
-        { key: 'eng', label: 'Engineering' },
-        { key: 'bus', label: 'Business' }
-      ]
-    }
-  ];
-
-  const modules = [
-    {
-      key: 'modules',
-      label: 'Modules',
-      children: [
-        { key: 'math', label: 'Mathematics' },
-        { key: 'phys', label: 'Physics' },
-        { key: 'prog', label: 'Programming' }
-      ]
-    }
-  ];
-    const rooms = [
-    {
-      key: 'rooms',
-      label: 'Rooms',
-      children: [
-        { key: 'room1', label: 'Room 101' },
-        { key: 'room2', label: 'Room 102' },
-        { key: 'room3', label: 'Room 103' }
-      ]
-    }
-  ];
-
+ const toggleAttendance = (id, isPresent) => {
+  const updatedStudents = students.map(student =>
+    student.id === id
+      ? { ...student, present: isPresent }
+      : { ...student } 
+  );
+  setStudents(updatedStudents);
+};
 
   // Filter students based on search input
   const filteredStudents = students.filter(student => 
@@ -107,11 +78,26 @@ const toggleAttendance = (id, isPresent) => {
 
 
   const handleSubmitAttendance = () => {
-    const presentStudents = students.filter(s => s.present);
-    const absentStudents = students.filter(s => !s.present);
-    console.log("Présents:", presentStudents);
-    console.log("Absents:", absentStudents);
-    setShowConfirmation(false); // Close dialog after submission
+    presenceService.submitStudentPresenceListByFilierAndModuleAndRoom(selectedModule,selectedFiliere,selectedRoom,students).then(res=>{
+      setSelectedRoom(null);
+      setSelectedModule(null);
+      setStudents([]);
+      presenceService.listOfFiliere().then(res=>{
+      const options = res.data.map(op => ({ label: op, value: op }));
+          setShowConfirmation(false);
+          setfiliereOptions(options);
+        },
+        err=>{
+            setShowConfirmation(false);
+            alert("error in getting filieres")
+       });
+     
+    },
+  err=>{
+    setShowConfirmation(false);
+    alert("error when showing student list after submit presence");
+  })
+     // Close dialog after submission
   };
   
   const confirmationDialogFooter = (
@@ -156,65 +142,47 @@ const toggleAttendance = (id, isPresent) => {
     </div>
   );
 
-const startToolbarTemplate = () => {
-  return (
-    <div
-      style={{
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        width: '100%',
-        flexWrap: 'wrap',
-        gap: '1rem'
-      }}
-    >
-      {/* Search input */}
-      <span style={{ display: 'flex', alignItems: 'center' }}>
-        <i className="pi pi-search" style={{ marginRight: '0.5rem' }} />
-        <InputText
-          value={filter}
-          onChange={(e) => setFilter(e.target.value)}
-          placeholder="Search by name"
-          style={{ padding: '0.5rem', borderRadius: '6px' }}
-        />
-      </span>
-      <Button
-        label="Enregistrer la présence"
-        icon="pi pi-check"
-        onClick={handleSubmitAttendance}
-        style={{
-          backgroundColor: '#074590',
-          borderColor: '#074590',
-          color: 'white',
-          fontWeight: 'bold',
-          padding: '0.6rem 1rem',
-          borderRadius: '6px'
-        }}
-      />
-    </div>
-  );
-};
-
 const leftToolbarTemplate = () => {
   // Sample options for dropdowns
-  const roomOptions = [
-    { label: 'Room 101', value: 'room1' },
-    { label: 'Room 102', value: 'room2' },
-    { label: 'Room 103', value: 'room3' }
-  ];
-
-  const filiereOptions = [
-    { label: 'Computer Science', value: 'cs' },
-    { label: 'Engineering', value: 'eng' },
-    { label: 'Business', value: 'bus' }
-  ];
-
-  const moduleOptions = [
-    { label: 'Mathematics', value: 'math' },
-    { label: 'Physics', value: 'phys' },
-    { label: 'Programming', value: 'prog' }
-  ];
-
+ 
+  const changeFilierHandler = (value) => {
+    setSelectedFiliere(value);
+     presenceService.listOfModuleByFilier(value).then(res=>{
+          const options = res.data.map(op => ({ label: op, value: op }));
+          setmoduleOptions(options);
+        },
+        err=>{
+            alert("error in getting Modules")
+        }
+    );
+  }
+   const changeModuleHandler = (value) => {
+    setSelectedModule(value)
+     presenceService.listOfRoomByFilierAndModule(value,selectedFiliere).then(res=>{
+          const options = res.data.map(op => ({ label: op, value: op }));
+          setroomOptions(options);
+        },
+        err=>{
+            alert("error in getting Modules")
+        }
+    );
+  }
+  const changeRoomHandler = (value)=>{
+    setSelectedRoom(value);
+    presenceService.listOfStudentByFilierAndModuleAndRoom(selectedModule,selectedFiliere,value)
+    .then(res=>{
+        const st = res.data.map((student, i) => ({
+        ...student, // ✅ clone safely
+        picture: `https://randomuser.me/api/portraits/${i % 2 === 0 ? 'men' : 'women'}/${i % 10}.jpg`,
+        present: false, // ensure default boolean
+        id : i
+      }));
+      setStudents(st);
+    },
+  err=>{
+    alert("error when showing student list");
+  })
+  }
   return (
     <div className="flex align-items-center gap-3" style={{ flexWrap: 'wrap' }}>
       {/* Search Input */}
@@ -228,20 +196,11 @@ const leftToolbarTemplate = () => {
         />
       </span>
 
-      {/* Room Dropdown */}
-      <Dropdown
-        value={selectedRoom}
-        options={roomOptions}
-        onChange={(e) => setSelectedRoom(e.value)}
-        placeholder="Select Room"
-        className="w-full md:w-14rem"
-      />
-
       {/* Filière Dropdown */}
       <Dropdown
         value={selectedFiliere}
         options={filiereOptions}
-        onChange={(e) => setSelectedFiliere(e.value)}
+        onChange={(e) => changeFilierHandler(e.value)}
         placeholder="Select Filière"
         className="w-full md:w-14rem"
       />
@@ -250,8 +209,16 @@ const leftToolbarTemplate = () => {
       <Dropdown
         value={selectedModule}
         options={moduleOptions}
-        onChange={(e) => setSelectedModule(e.value)}
+        onChange={(e) => changeModuleHandler(e.value)}
         placeholder="Select Module"
+        className="w-full md:w-14rem"
+      />
+      {/* Room Dropdown */}
+      <Dropdown
+        value={selectedRoom}
+        options={roomOptions}
+        onChange={(e) => changeRoomHandler(e.value)}
+        placeholder="Select Room"
         className="w-full md:w-14rem"
       />
     </div>
@@ -300,12 +267,12 @@ const leftToolbarTemplate = () => {
       <div style={{ maxHeight: '100vh', overflow: 'auto' }}>
         <DataTable 
           value={filteredStudents}
+          rowKey="id"
           //scrollable 
           //scrollHeight="flex"
-          virtualScrollerOptions={{ itemSize: 5 }}
           emptyMessage="No students found"
         >
-          <Column field="code" header="Student Code" style={{ minWidth: '120px' }}></Column>
+          <Column field="student_code" header="Student Code" style={{ minWidth: '120px' }}></Column>
           <Column field="cne" header="CNE" style={{ minWidth: '120px' }}></Column>
           <Column field="firstName" header="First Name" style={{ minWidth: '120px' }}></Column>
           <Column field="lastName" header="Last Name" style={{ minWidth: '120px' }}></Column>
@@ -313,10 +280,9 @@ const leftToolbarTemplate = () => {
           <Column
                 header="Présent"
                 body={(rowData) => (
-                    <input
-                    type="checkbox"
-                    checked={rowData.present}
-                    onChange={(e) => toggleAttendance(rowData.id, e.target.checked)}
+                    <Checkbox
+                    checked={!!rowData.present}
+                    onChange={(e) => toggleAttendance(rowData.id, e.checked)}
                     />
                 )}
                 style={{ textAlign: 'center', width: '100px' }}
