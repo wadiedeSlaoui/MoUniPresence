@@ -48,6 +48,17 @@ listOfStudentByFilierAndModuleAndRoom(module, filiere,room) {
         }
     });
 }
+listOfStudentByFilierAndModuleAndRoomSubmitted(module, filiere,room,username) {
+
+    return axios.get(User_API_BASE_URL + "/studentsSubmited", {
+        params: {
+            module: module,
+            filiere: filiere,
+            username: username,
+            room: room
+        }
+    });
+}
 submitStudentPresenceListByFilierAndModuleAndRoom(module, filiere,room,studentList) {
     const username = sessionStorage.getItem("user");
 

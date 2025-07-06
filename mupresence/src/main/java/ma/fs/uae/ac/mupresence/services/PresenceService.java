@@ -16,7 +16,7 @@ public interface PresenceService {
 
     List<String> roomListByUserAndFiliereAndModule(String usernmae, String filiere, String module);
 
-    List<StudentExamDTO> studentListByUserAndFiliereAndModuleAndRoom(String username, String filiere, String module, String room);
+    List<StudentExamDTO> studentListByUserAndFiliereAndModuleAndRoom(String username, String filiere, String module, String room,boolean submitted);
 
     void studenPresenceByUserAndFiliereAndModuleAndRoom(String username, String filiere, String module, String room, List<StudentExamDTO> studentsPresense);
 }
