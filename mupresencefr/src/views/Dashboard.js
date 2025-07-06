@@ -154,9 +154,9 @@ function Dashboard() {
 
   return (
     <Container fluid className="py-4">
-      <h1>Student Exam Data Extractor</h1>
+      <h1>Extracteur de données d'examen des étudiants</h1>
       <p className="mb-4">
-        Click the button to select and extract student exam data from an Excel file.
+        Cliquez sur le bouton pour sélectionner et extraire les données d’examen des étudiants à partir d’un fichier Excel.
       </p>
       
       <div className="d-flex gap-3 mb-4">
@@ -175,10 +175,10 @@ function Dashboard() {
                 aria-hidden="true"
                 className="me-2"
               />
-              Processing...
+              Traitement...
             </>
           ) : (
-            'Select & Extract Student Data'
+            'Sélectionner et extraire les données des étudiants'
           )}
         </Button>
         
@@ -192,17 +192,17 @@ function Dashboard() {
         
         {extractedData && (
           <Button variant="success" onClick={sendImportedData}>
-            Download Module Lists
+            Télécharger les listes de modules
           </Button>
         )}
       </div>
       
       {fileName && (
         <Alert variant="info" className="mb-3">
-          Selected file: <strong>{fileName}</strong>
+          Fichier sélectionné: <strong>{fileName}</strong>
           {extractedData && (
             <span className="ms-2">
-              ({extractedData.length} student records extracted)
+              ({extractedData.length} dossiers des étudiants extraits)
             </span>
           )}
         </Alert>
@@ -216,20 +216,20 @@ function Dashboard() {
       
       {fileInfo.university && (
         <Card className="mb-3">
-          <Card.Header>File Information</Card.Header>
+          <Card.Header>Informations sur le fichier</Card.Header>
           <Card.Body>
             <Table bordered>
               <tbody>
                 <tr>
-                  <th>University</th>
+                  <th>Université</th>
                   <td>{fileInfo.university}</td>
                 </tr>
                 <tr>
-                  <th>Place</th>
+                  <th>Lieu</th>
                   <td>{fileInfo.place}</td>
                 </tr>
                 <tr>
-                  <th>City</th>
+                  <th>Ville</th>
                   <td>{fileInfo.city}</td>
                 </tr>
                 <tr>
@@ -267,15 +267,15 @@ function Dashboard() {
                   <Table striped bordered hover>
                     <thead>
                       <tr>
-                        <th>Student Code</th>
-                        <th>Massar Code</th>
-                        <th>Last Name</th>
-                        <th>First Name</th>
+                        <th>Code d'étudiants</th>
+                        <th>Code Massar</th>
+                        <th>Nom</th>
+                        <th>Prénom</th>
                         {fileInfo.modules.map((module, i) => (
                           <th key={i}>{module}</th>
                         ))}
-                        <th>Room</th>
-                        <th>Place</th>
+                        <th>Salle</th>
+                        <th>Lieu</th>
                       </tr>
                     </thead>
                     <tbody>
@@ -304,13 +304,13 @@ function Dashboard() {
                       <thead>
                         <tr>
                           <th>#</th>
-                          <th>Student Code</th>
+                          <th>Code d'étudiant</th>
                           <th>Massar Code</th>
-                          <th>Last Name</th>
-                          <th>First Name</th>
+                          <th>Nom</th>
+                          <th>Prénom</th>
                           <th>Grade</th>
-                          <th>Room</th>
-                          <th>Place</th>
+                          <th>Salle</th>
+                          <th>Lieu</th>
                         </tr>
                       </thead>
                       <tbody>

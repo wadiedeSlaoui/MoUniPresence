@@ -10,12 +10,11 @@ import {
   Nav,
   Container,
   Row,
-  Col
+  Col,
+  InputGroup
 } from "react-bootstrap";
-import { error } from "jquery";
 import { useState, useEffect } from 'react';
 import Loading from '../components/Loading';
-import {   InputGroup } from 'react-bootstrap';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 
 function User() {
@@ -27,52 +26,53 @@ function User() {
   const [password, setPassword] = React.useState('');
   const [loading, setLoading] = React.useState(false);
   const [showPassword, setShowPassword] = React.useState(false);
-  const handleSubmit = async (e) => {
+  const [errors, setErrors] = React.useState({}); // Add error state
 
-  e.preventDefault();
-
-  const newUser = {
-    role,
-    firstName,
-    lastName,
-    username,
-    mail,
-    password
+  const validateForm = () => {
+    const newErrors = {};
+    if (!role) newErrors.role = "Veuillez sélectionner un rôle";
+    if (!lastName) newErrors.lastName = "Veuillez saisir un nom";
+    if (!firstName) newErrors.firstName = "Veuillez saisir un prénom";
+    if (!username) newErrors.username = "Veuillez saisir un nom d'utilisateur";
+    if (!mail) newErrors.mail = "Veuillez saisir un email";
+    if (!password) newErrors.password = "Veuillez saisir un mot de passe";
+    
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
   };
-  setLoading(true)
-  AuthServices.register(newUser).then(res=>{
-      setLoading(false)
-      alert("la création de l'utilisateur est complete");   
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (!validateForm()) {
+      return;
+    }
+
+    const newUser = {
+      role,
+      firstName,
+      lastName,
+      username,
+      mail,
+      password
+    };
+    
+    setLoading(true);
+    AuthServices.register(newUser).then(res => {
+      setLoading(false);
+      alert("La création de l'utilisateur est complète");   
       setRole('');
       setLastName('');
       setFirstName('');
       setUsername('');
       setMail('');
       setPassword('');
-  },
-  error=>{
-     setLoading(false)
-     alert("Erreur lors de la création de l'utilisateur");   
-  }
-)
-  }
-//   try {
-//     await axios.post('http://localhost:8080/api/users', newUser);
-//     alert("Utilisateur créé avec succès !");
-//     // Clear form if needed:
-//     setRole('');
-//     setLastName('');
-//     setFirstName('');
-//     setUsername('');
-//     setMail('');
-//     setPassword('');
-//   } catch (err) {
-//     console.error(err);
-//     alert("Erreur lors de la création de l'utilisateur");
-//   }
-// };
-
-
+      setErrors({});
+    }, error => {
+      setLoading(false);
+      alert("Erreur lors de la création de l'utilisateur");   
+    });
+  };
 
   if (loading) return <Loading />;
 
@@ -88,19 +88,23 @@ function User() {
               <Card.Body>
                 <Form>
                   <Row>
-                     <Col md="12">
+                    <Col md="12">
                       <Form.Group>
                         <label>Type d'utilisateur</label>
-                         <Form.Select
+                        <Form.Select
                           value={role}
                           onChange={(e) => setRole(e.target.value)}
-                         >
-                         <option value="" disabled hidden>Sélectionner le type</option>
-                         <option value="ROLE_ADMIN">Admin</option>
-                         <option value="ROLE_USER">Surveillant</option>
-                         </Form.Select>
+                          isInvalid={!!errors.role}
+                        >
+                          <option value="" disabled hidden>Sélectionner le type</option>
+                          <option value="ROLE_ADMIN">Admin</option>
+                          <option value="ROLE_SURVEILLANT">Surveillant</option>
+                        </Form.Select>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.role}
+                        </Form.Control.Feedback>
                       </Form.Group>
-                     </Col>
+                    </Col>
                     <Col className="px-1" md="6">
                       <Form.Group>
                         <label>Nom</label>
@@ -109,33 +113,43 @@ function User() {
                           type="text"
                           value={lastName}
                           onChange={(e) => setLastName(e.target.value)}
+                          isInvalid={!!errors.lastName}
                         />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.lastName}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                     <Col className="pl-1" md="6">
                       <Form.Group>
-                        <label>
-                          Prénom
-                        </label>
+                        <label>Prénom</label>
                         <Form.Control
                           placeholder="saisir le prénom"
                           type="text"
                           value={firstName}
                           onChange={(e) => setFirstName(e.target.value)}
+                          isInvalid={!!errors.firstName}
                         />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.firstName}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                   </Row>
-                                    <Row>
+                  <Row>
                     <Col md="12">
                       <Form.Group>
                         <label>User name</label>
-                          <Form.Control
-                            placeholder="Saisir User name"
-                            type="text"
-                            value={username}
-                            onChange={(e) => setUsername(e.target.value)}
-                          />
+                        <Form.Control
+                          placeholder="Saisir User name"
+                          type="text"
+                          value={username}
+                          onChange={(e) => setUsername(e.target.value)}
+                          isInvalid={!!errors.username}
+                        />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.username}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                   </Row>
@@ -144,49 +158,63 @@ function User() {
                       <Form.Group>
                         <label htmlFor="exampleInputEmail1">Address email</label>
                         <Form.Control
-                         placeholder="Saisir l'email"
-                         type="email"
-                         value={mail}
-                         onChange={(e) => setMail(e.target.value)}
+                          placeholder="Saisir l'email"
+                          type="email"
+                          value={mail}
+                          onChange={(e) => setMail(e.target.value)}
+                          isInvalid={!!errors.mail}
                         />
+                        <Form.Control.Feedback type="invalid">
+                          {errors.mail}
+                        </Form.Control.Feedback>
                       </Form.Group>
                     </Col>
                   </Row>
                   <Row>
-                      <Col md="12">
-                        <Form.Group>
-                          <Form.Label>Mot de passe</Form.Label>
-                          <InputGroup>
-                            <Form.Control
-                              placeholder="Saisir le mot de passe"
-                              type={showPassword ? 'text' : 'password'}
-                              value={password}
-                              onChange={(e) => setPassword(e.target.value)}
-                            />
-                            <InputGroup.Text
-                              onClick={() => setShowPassword(!showPassword)}
-                              style={{ cursor: 'pointer',
-                                       top: '50%',
-                                       transform: 'translateY(-50%)',
-                                       right: '0.75rem',
-                                       position: 'absolute',
-                                       color: '#6b7280' /* Optional: gray-500 for example */                                 
-                                     }}
-                            >
-                              {showPassword ? <FaEyeSlash /> : <FaEye />}
-                            </InputGroup.Text>
-                          </InputGroup>
-                        </Form.Group>
-                      </Col>
+                    <Col md="12">
+                      <Form.Group>
+                        <Form.Label>Mot de passe</Form.Label>
+                        <div style={{ display: 'flex', alignItems: 'center' }}>
+                          <Form.Control
+                            placeholder="Saisir le mot de passe"
+                            type={showPassword ? 'text' : 'password'}
+                            value={password}
+                            onChange={(e) => setPassword(e.target.value)}
+                            isInvalid={!!errors.password}
+                            style={{ flex: 1 }} // Takes remaining space
+                          />
+                          <Button
+                            variant="outline-secondary"
+                            onClick={() => setShowPassword(!showPassword)}
+                            style={{ 
+                              marginLeft: '10px',
+                              height: '38px', 
+                              width: '42px', 
+                              display: 'flex',
+                              alignItems: 'center',
+                              justifyContent: 'center'
+                            }}
+                          >
+                            <span style={{ fontSize: '1rem' }}>  {/* Increased icon size */}
+            {showPassword ? <FaEyeSlash /> : <FaEye />}
+          </span>
+                            {showPassword ? <FaEyeSlash /> : <FaEye />}
+                          </Button>
+                        </div>
+                        <Form.Control.Feedback type="invalid">
+                          {errors.password}
+                        </Form.Control.Feedback>
+                      </Form.Group>
+                    </Col>
                   </Row>
-                    <Button
-                      className="btn-fill pull-right"
-                      type="submit"
-                      variant="info"
-                      onClick={handleSubmit}
-                    >
-                      Créer
-                    </Button>                 
+                  <Button
+                    className="btn-fill pull-right"
+                    type="submit"
+                    variant="info"
+                    onClick={handleSubmit}
+                  >
+                    Créer
+                  </Button>                 
                 </Form>
               </Card.Body>
             </Card>
@@ -195,6 +223,4 @@ function User() {
       </Container>
     </>
   );
-}
-
-export default User;
+}export default User;

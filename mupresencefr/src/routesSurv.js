@@ -28,27 +28,21 @@ import StudentList from "studentlist/Studentlist";
 
 const dashboardRoutes = [
 
-  {
-    path: "/dashboard",
-    name: "Dashboard",
-    icon: "nc-icon nc-chart-pie-35",
-    component: Dashboard,
-    layout: "/surv"
-  },
- 
+
  {
-    path: "/report",
-    name: "Report",
-    icon: "nc-icon nc-notes",
-    component: ReportComponent,
-    layout: "/surv"
-  },{
       path: "/studentlist",
       name: "Liste des étudiants",
       icon: "nc-icon nc-notes",
       component: StudentList,
       layout: "/surv"
   },
+ {
+    path: "/report",
+    name: "Report",
+    icon: "nc-icon nc-notes",
+    component: ReportComponent,
+    layout: "/surv"
+  }
 /*  {
     path: "/typography",
     name: "Typography",

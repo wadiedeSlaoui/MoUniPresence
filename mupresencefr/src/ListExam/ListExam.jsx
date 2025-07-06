@@ -79,19 +79,23 @@ const surveillantTemplate = (rowData) => {
     />
   );
 };
- const handleRowClick = (event) => {
-
+const handleRowClick = (event) => {
+  // Check if the exam is submitted
+  if (event.data.submitted) {
     setSelectedSession(event.data);
-    presenceService.listOfStudentByFilierAndModuleAndRoomSubmitted(event.data.module,event.data.filiere,event.data.room,event.data.survaillant).then(res=>{
-        setStudentsList(res.data);
-    },
-  err=>{
-    alert("error when download list of students")
-  })
+    presenceService.listOfStudentByFilierAndModuleAndRoomSubmitted(
+      event.data.module,
+      event.data.filiere,
+      event.data.room,
+      event.data.survaillant
+    ).then(res => {
+      setStudentsList(res.data);
+    }, err => {
+      alert("error when downloading list of students");
+    });
     setDialogVisible(true);
-  };
-
-
+  }
+};
   const filteredExams = exams.filter((exam) => {
     const fieldValue = exam[searchField]?.toLowerCase() || '';
     const matchesSearch = fieldValue.includes(searchTerm.toLowerCase());
@@ -141,14 +145,15 @@ const surveillantTemplate = (rowData) => {
             </label>
         </div>
       </div>
-
-      <DataTable 
+        <DataTable 
         value={filteredExams} 
         emptyMessage="Aucun examen trouvé"  
         onRowClick={handleRowClick}
         selectionMode="single"
         rowHover
-      >
+        rowClassName={(rowData) => rowData.submitted ? 'clickable-row' : 'non-clickable-row'}
+        >
+
         <Column field="filiere" header="Filière" style={{ minWidth: '150px' }} />
         <Column field="module" header="Module" style={{ minWidth: '150px' }} />
         <Column field="room" header="Salle" style={{ minWidth: '120px' }} />

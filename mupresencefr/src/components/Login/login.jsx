@@ -52,7 +52,7 @@ import Loading from '../Loading';
                 if (sessionStorage.getItem('role') === "ADMIN") {
                     this.props.history.push('/admin/dashboard');
                 } else {
-                    this.props.history.push('/surv/dashboard');
+                    this.props.history.push('/surv/studentlist');
                 }
                 } else {
                this.errorRoleRef.current.style.display = "block";
